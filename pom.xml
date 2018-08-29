@@ -23,6 +23,12 @@
 			<id>local_repo</id>
 			<url>file://${project.basedir}/local_repo</url>
 		</repository>
+
+		<repository>
+			<id>new_oscar_repo</id>
+			<url>http://mvn.oscar-emr.com/repository</url>
+		</repository>
+
 	</repositories>
 
 	<pluginRepositories>
@@ -231,6 +237,12 @@
 			<groupId>taglibs</groupId>
 			<artifactId>standard</artifactId>
 			<version>1.1.2</version>
+		</dependency>
+
+		<dependency>
+	    		<groupId>net.rgielen</groupId>
+	    		<artifactId>struts1filter</artifactId>
+	    		<version>1.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- pdf / lowagie -->

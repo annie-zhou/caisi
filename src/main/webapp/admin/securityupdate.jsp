@@ -73,11 +73,14 @@
 
     	if(request.getParameter("password")==null || !"*********".equals(request.getParameter("password"))){
     		s.setPassword(sbTemp.toString());
+    		s.setPasswordUpdateDate(new java.util.Date());
     	}
 
     	if(request.getParameter("pin")==null || !"****".equals(request.getParameter("pin"))) {
     		s.setPin(sPin);
+    		s.setPinUpdateDate(new java.util.Date());
     	}
+	
     	securityDao.saveOrUpdate(s);
     	rowsAffected=1;
     }

@@ -107,7 +107,7 @@ public class ProviderDao extends OscarSuperDao {
 			{"list_bills_servicetype", "select distinct servicetype, servicetype_name from ctl_billingservice where status='A'"},
 
 			{"searchpassword", "select password from security where provider_no = ?" },
-			{"updatepassword", "update security set password = ? where  provider_no= ?" },
+			{"updatepassword", "update security set password = ?, passwordUpdateDate=now(), pinUpdateDate=now() where  provider_no= ?" },
 
 		    {"search_provider", "select provider_no, last_name, first_name from provider where last_name like ? and first_name like ? order by last_name"},
 		    {"search_active_provider", "select provider_no, last_name, first_name from provider where last_name like ? and first_name like ? and status=1 order by last_name"},

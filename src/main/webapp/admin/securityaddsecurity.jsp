@@ -74,6 +74,8 @@
 	    s.setPassword(sbTemp.toString());
 	    s.setProviderNo(request.getParameter("provider_no"));
 	    s.setPin(request.getParameter("pin"));
+	    s.setPasswordUpdateDate(new java.util.Date());
+	    s.setPinUpdateDate(new java.util.Date());
 	    s.setBExpireset(request.getParameter("b_ExpireSet")==null?0:Integer.parseInt(request.getParameter("b_ExpireSet")));
 	    s.setDateExpiredate(MyDateFormat.getSysDate(request.getParameter("date_ExpireDate")));
 	    s.setBLocallockset(request.getParameter("b_LocalLockSet")==null?0:Integer.parseInt(request.getParameter("b_LocalLockSet")));

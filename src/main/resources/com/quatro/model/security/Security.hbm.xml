@@ -34,8 +34,10 @@
 			<column name="b_expireSet" precision="1" scale="0" default="1" />
 		</property>
 		<!-- 
-		<property name="lastUpdateDate" column="lastUpdateDate"></property>
-		<property name="lastUpdateUser" column="lastUpdateUser"></property>
-		-->
+		<property name="lastUpdateDate" column="lastUpdateDate" type="java.util.Date"></property>
+		<property name="lastUpdateUser" column="lastUpdateUser" type="java.util.Date"></property>
+		 -->
+		<property name="passwordUpdateDate" column="passwordUpdateDate" type="java.util.Date"></property>
+		<property name="pinUpdateDate" column="pinUpdateDate" type="java.util.Date"></property>
 	</class>
 </hibernate-mapping>

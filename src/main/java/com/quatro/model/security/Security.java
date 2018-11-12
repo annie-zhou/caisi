@@ -51,6 +51,10 @@ public class Security implements java.io.Serializable {
 	private String loginIP = "";
 	private Date loginDate;
 	private int loginStatus = 0;
+	
+	private Date passwordUpdateDate;
+	private Date pinUpdateDate;
+	
 
 	public Calendar getLastUpdateDate() {
 		return lastUpdateDate;
@@ -181,6 +185,23 @@ public class Security implements java.io.Serializable {
 	public void setLoginStatus(int loginStatus) {
 		this.loginStatus = loginStatus;
 	}
+	
+	 public Date getPasswordUpdateDate() {
+         return passwordUpdateDate;
+	 }
+
+	 public void setPasswordUpdateDate(Date passwordUpdateDate) {
+         this.passwordUpdateDate = passwordUpdateDate;
+	 }
+
+	 public Date getPinUpdateDate() {
+         return pinUpdateDate;
+	 }
+
+	 public void setPinUpdateDate(Date pinUpdateDate) {
+         this.pinUpdateDate = pinUpdateDate;
+	 }
+
 
 	/**
 	 * @return true if inputed password equals password in the DB, false otherwise.

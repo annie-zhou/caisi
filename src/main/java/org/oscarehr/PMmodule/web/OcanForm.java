@@ -53,6 +53,8 @@ import org.oscarehr.common.model.OcanStaffFormData;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
 
+import oscar.OscarProperties;
+
 
 public class OcanForm {
 	
@@ -277,6 +279,17 @@ public class OcanForm {
 			return "F";
 		}
 		return "UNK";
+	}
+	
+	public static List<OcanFormOption> getOcanFormOptions(String ocanVersion, String category)
+	{
+		String ocanVersionStr = "1.2";
+		if(ocanVersion!=null && ocanVersion.trim().length()>0)
+		{
+			ocanVersionStr = ocanVersion;
+		}
+		List<OcanFormOption> results=ocanFormOptionDao.findByVersionAndCategory(ocanVersionStr, category);
+		return(results);
 	}
 	
 	public static List<OcanFormOption> getOcanFormOptions(String category)
@@ -845,6 +858,13 @@ public class OcanForm {
 			optionMap.put(option.getOcanDataCategoryValue(), option);
 		}
 		
+		String ocanVersionStr = "";
+		int ocanVersion = 0;
+		if(OscarProperties.getInstance().getProperty("ocan.version", "").trim().length()>0)
+		{
+			ocanVersionStr = OscarProperties.getInstance().getProperty("ocan.version", "").trim();
+			ocanVersion = Double.valueOf(ocanVersionStr).intValue();
+		}
 		
 		sb.append("<h4>Pre-Charge</h4>");
 		renderSingleCheckbox(optionMap.get("013-01"),sb,question,existingAnswers);
@@ -870,6 +890,8 @@ public class OcanForm {
 		renderSingleCheckbox(optionMap.get("013-14"),sb,question,existingAnswers);
 		renderSingleCheckbox(optionMap.get("013-15"),sb,question,existingAnswers);
 		renderSingleCheckbox(optionMap.get("013-16"),sb,question,existingAnswers);
+		if(ocanVersion==3)
+			renderSingleCheckbox(optionMap.get("013-22"),sb,question,existingAnswers);
 		sb.append("<h4>Other</h4>");
 		renderSingleCheckbox(optionMap.get("013-21"),sb,question,existingAnswers);
 		renderSingleCheckbox(optionMap.get("UNK"),sb,question,existingAnswers);

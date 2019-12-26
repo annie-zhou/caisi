@@ -37,9 +37,6 @@ public class OcanIarSubmissionTask extends TimerTask {
 	@Override
 	public void run() {
 		try {
-			if(true)
-				return;
-			
 			logger.info("Running OCAN IAR Submission Task");
 			LoggedInInfo.setLoggedInInfoToCurrentClassAndMethod();
 

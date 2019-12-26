@@ -33,7 +33,11 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
+import org.oscarehr.ocan.OCANv2SubmissionFileDocument;
 import org.oscarehr.util.MiscUtils;
+
+import ca.ehealthontario.ccim.OCANSubmissionFileDocument;
+import oscar.OscarProperties;
 
 public class OcanIarSubmitAction extends DispatchAction {
 
@@ -57,7 +61,19 @@ public class OcanIarSubmitAction extends DispatchAction {
 			logger.error("Error:",e);
 		}
 		
-		int submissionId_core = OcanReportUIBean.sendSubmissionToIAR(OcanReportUIBean.generateOCANSubmission("CORE"));
+		String ocanVersionStr = "";
+		int ocanVersion = 0;
+		if(OscarProperties.getInstance().getProperty("ocan.version", "").trim().length()>0)
+		{
+			ocanVersionStr = OscarProperties.getInstance().getProperty("ocan.version", "").trim();
+			ocanVersion = Double.valueOf(ocanVersionStr).intValue();
+		}
+		
+		OCANSubmissionFileDocument ocanSubmissionFileDocument  = OcanReportUIBeanV3.generateOCANSubmission("CORE");
+		int submissionId_core_v3 = OcanReportUIBeanV3.sendSubmissionToIAR(ocanSubmissionFileDocument);
+		
+		OCANv2SubmissionFileDocument ocaNv2SubmissionFileDocument = OcanReportUIBean.generateOCANSubmission("CORE");
+		int submissionId_core = OcanReportUIBean.sendSubmissionToIAR(ocaNv2SubmissionFileDocument);			
 		
 		try {
 			response.getWriter().println(submissionId_core);

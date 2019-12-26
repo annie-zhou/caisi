@@ -22,6 +22,7 @@
     Toronto, Ontario, Canada
 
 --%>
+<%@page import="oscar.OscarProperties"%>
 <%@page import="org.oscarehr.common.model.OcanStaffForm"%>
 <%@page import="org.oscarehr.PMmodule.model.Admission"%>
 <%@page import="org.oscarehr.common.model.Demographic"%>
@@ -30,6 +31,14 @@
 
 
 <%
+	String ocanVersionStr = "";
+	int ocanVersion = 0;
+	if(OscarProperties.getInstance().getProperty("ocan.version", "").trim().length()>0)
+	{
+		ocanVersionStr = OscarProperties.getInstance().getProperty("ocan.version", "").trim();
+		ocanVersion = Double.valueOf(ocanVersionStr).intValue();
+	}
+
 	int currentDemographicId=Integer.parseInt(request.getParameter("demographicId"));	
 	int prepopulationLevel = OcanForm.PRE_POPULATION_LEVEL_ALL;
 	String ocanType = request.getParameter("ocanType");
@@ -183,7 +192,7 @@ $('document').ready(function() {
 			<td class="genericTableHeader">Functional Center Name</td>
 			<td class="genericTableData">
 				<select name="serviceUseRecord_functionName<%=centerNumber %>" class="{validate: {required:true}}">					
-					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "serviceUseRecord_functionName"+centerNumber, OcanForm.getOcanFormOptions("MIS Functional Centre List"), prepopulationLevel)%>
+					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "serviceUseRecord_functionName"+centerNumber, OcanForm.getOcanFormOptions(ocanVersionStr, "MIS Functional Centre List"), prepopulationLevel)%>
 				</select>					
 			</td>
 		</tr>
@@ -212,10 +221,18 @@ $('document').ready(function() {
 			<td class="genericTableHeader">Referral Source</td>
 			<td class="genericTableData">
 				<select name="serviceUseRecord_source_of_referral<%=centerNumber %>" class="{validate: {required:true}}">
-					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "serviceUseRecord_source_of_referral"+centerNumber, OcanForm.getOcanFormOptions("Referral Source"),prepopulationLevel)%>
+					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "serviceUseRecord_source_of_referral"+centerNumber, OcanForm.getOcanFormOptions(ocanVersionStr, "Referral Source"),prepopulationLevel)%>
 				</select>					
 			</td>
 		</tr>	
+		
+		<tr>
+			<td class="genericTableHeader">Referral Source - Other</td>
+			<td class="genericTableData">
+				<%=OcanForm.renderAsTextField(ocanStaffForm.getId(),"serviceUseRecord_source_of_referralother"+centerNumber,128, prepopulationLevel)%>
+			</td>
+		</tr>
+		
 		<tr>
 			<td class="genericTableHeader">Request for Service Date (YYYY-MM-DD)</td>
 			<td class="genericTableData" class="{validate: {required:true}}">

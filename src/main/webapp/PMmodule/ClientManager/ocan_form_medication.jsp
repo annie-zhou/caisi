@@ -88,7 +88,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="genericTableHeader">Dosage</td>
+			<td class="genericTableHeader">Dosage, Frequency and Route</td>
 			<td class="genericTableData">
 				<%=OcanForm.renderAsTextField(ocanStaffForm.getId(), "medication_"+medicationNumber+"_dosage", 128,prepopulationLevel)%>	
 			</td>								

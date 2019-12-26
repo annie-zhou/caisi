@@ -22,6 +22,7 @@
     Toronto, Ontario, Canada
 
 --%>
+<%@page import="oscar.OscarProperties"%>
 <%@page import="org.oscarehr.common.model.OcanStaffFormData"%>
 <%@page import="org.oscarehr.common.model.OcanStaffForm"%>
 <%@page import="org.oscarehr.PMmodule.model.Admission"%>
@@ -30,6 +31,14 @@
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 <%@page import="java.util.List"%>
 <%
+	String ocanVersionStr = "";
+	int ocanVersion = 0;
+	if(OscarProperties.getInstance().getProperty("ocan.version", "").trim().length()>0)
+	{
+		ocanVersionStr = OscarProperties.getInstance().getProperty("ocan.version", "").trim();
+		ocanVersion = Double.valueOf(ocanVersionStr).intValue();
+	}
+
 	int currentDemographicId=Integer.parseInt(request.getParameter("demographicId"));	
 	int prepopulationLevel = OcanForm.PRE_POPULATION_LEVEL_ALL;
 	String ocanType = request.getParameter("ocanType");
@@ -92,8 +101,8 @@
 			<td class="genericTableHeader">Optimal Referral</td>
 			<td class="genericTableData">
 				<select name="<%=referralNumber%>_summary_of_referral_optimal">				
-					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), referralNumber+"_summary_of_referral_optimal", OcanForm.getOcanFormOptions("Action List"),_summary_of_referral_optimal,prepopulationLevel)%>
-				</select>					
+					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), referralNumber+"_summary_of_referral_optimal", OcanForm.getOcanFormOptions(ocanVersionStr, "Action List"),_summary_of_referral_optimal,prepopulationLevel)%>
+				</select>
 			</td>
 		</tr>
 
@@ -108,7 +117,7 @@
 			<td class="genericTableHeader">Actual Referral</td>
 			<td class="genericTableData">
 				<select name="<%=referralNumber%>_summary_of_referral_actual">
-					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), referralNumber+"_summary_of_referral_actual", OcanForm.getOcanFormOptions("Action List"), _summary_of_referral_actual, prepopulationLevel)%>
+					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), referralNumber+"_summary_of_referral_actual", OcanForm.getOcanFormOptions(ocanVersionStr, "Action List"), _summary_of_referral_actual, prepopulationLevel)%>
 				</select>					
 			</td>
 		</tr>
@@ -123,7 +132,7 @@
 			<td class="genericTableHeader">Reason for Difference</td>
 			<td class="genericTableData">
 				<select name="<%=referralNumber%>_summary_of_referral_diff">
-					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), referralNumber+"_summary_of_referral_diff", OcanForm.getOcanFormOptions("Reason for Difference"),_summary_of_referral_diff,prepopulationLevel)%>
+					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), referralNumber+"_summary_of_referral_diff", OcanForm.getOcanFormOptions(ocanVersionStr, "Reason for Difference"),_summary_of_referral_diff,prepopulationLevel)%>
 				</select>					
 			</td>
 		</tr>						

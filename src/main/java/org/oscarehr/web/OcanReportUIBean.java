@@ -24,6 +24,8 @@
 package org.oscarehr.web;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -68,7 +70,7 @@ import org.oscarehr.common.model.OcanStaffForm;
 import org.oscarehr.common.model.OcanStaffFormData;
 import org.oscarehr.ocan.AboriginalOriginDocument.AboriginalOrigin;
 import org.oscarehr.ocan.AcceptedDocument.Accepted;
-import org.oscarehr.ocan.*;
+import org.oscarehr.ocan.ActionDocument;
 import org.oscarehr.ocan.ActionDocument.Action;
 import org.oscarehr.ocan.ActionListDocument.ActionList;
 import org.oscarehr.ocan.AddictionTypeDocument.AddictionType;
@@ -137,6 +139,7 @@ import org.oscarehr.ocan.MedicationListDocument.MedicationList;
 import org.oscarehr.ocan.NeedRatingDocument.NeedRating;
 import org.oscarehr.ocan.OCANDomainsDocument.OCANDomains;
 import org.oscarehr.ocan.OCANLeadDocument.OCANLead;
+import org.oscarehr.ocan.OCANv2SubmissionFileDocument;
 import org.oscarehr.ocan.OCANv2SubmissionFileDocument.OCANv2SubmissionFile;
 import org.oscarehr.ocan.OCANv2SubmissionRecordDocument.OCANv2SubmissionRecord;
 import org.oscarehr.ocan.OtherAgencyContactDocument.OtherAgencyContact;
@@ -186,7 +189,8 @@ import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
-import oscar.OscarProperties;
+import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
+
 import ca.ehealthontario.ccim.ApplyToDocument;
 import ca.ehealthontario.ccim.ApplyToDocument.ApplyTo;
 import ca.ehealthontario.ccim.ApplyToDocument.ApplyTo.Assessment.AssessmentType;
@@ -209,8 +213,7 @@ import ca.on.iar.types.SubmissionType.Text;
 import ca.on.iar.types.TransmissionHeaderType;
 import ca.on.iar.types.TransmissionHeaderType.Application;
 import ca.on.iar.types.TransmissionHeaderType.Organization;
-
-import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
+import oscar.OscarProperties;
 
 public class OcanReportUIBean implements CallbackHandler {
 
@@ -347,6 +350,40 @@ public class OcanReportUIBean implements CallbackHandler {
 
 		return submissionFileDoc;
 	}
+	
+	private static void convertJavaToXml(Class cls, Object obj, String filename, String ocanVersion) throws Exception
+	{
+		JAXBContext jaxbContext = JAXBContext.newInstance(cls);
+		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+		
+		File file = new File("/rp/annie/temp/"+filename+"_"+ocanVersion+"_"+System.currentTimeMillis());
+		if(!file.exists())
+			file.createNewFile();
+		
+		jaxbMarshaller.marshal(obj, file);
+		System.out.println("file has been written: "+file.getAbsolutePath());
+	}
+	
+	private static void writeFile(String fileData, String filename, String ocanVersion)
+	{
+		try {
+			File file = new File("/rp/annie/temp/"+filename+"_"+ocanVersion+"_"+System.currentTimeMillis());
+			if(!file.exists())
+				file.createNewFile();
+
+			FileWriter fileWriter = new FileWriter(file);
+			fileWriter.write(fileData);
+			fileWriter.flush();
+			fileWriter.close();
+			
+			System.out.println("file has been written: "+file.getAbsolutePath());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
 	public static int prepareSubmissionToIAR(OCANv2SubmissionFileDocument submissionDoc, boolean autoSubmit, OutputStream out ) {
 		if(submissionDoc.getOCANv2SubmissionFile().getOCANv2SubmissionRecordArray().length == 0) {
 			logger.info("No records to send");
@@ -361,12 +398,14 @@ public class OcanReportUIBean implements CallbackHandler {
 		try {
 			XmlOptions options = new XmlOptions();
 			options.setUseDefaultNamespace();
-			//options.setSavePrettyPrint();
+			options.setSavePrettyPrint();
 			options.setCharacterEncoding("UTF-8");
 			Map<String,String> implicitNamespaces = new HashMap<String,String>();
 			implicitNamespaces.put("", "http://oscarehr.org/ocan");
 			options.setSaveImplicitNamespaces(implicitNamespaces);
 			submissionDoc.save(sos,options);
+			
+			writeFile(sos.toString(), "ocan_submissionDoc", "1.2");
 		}catch(IOException e) {
 			logger.error("Error:",e);
 			return 0;
@@ -579,7 +618,7 @@ public class OcanReportUIBean implements CallbackHandler {
 		return log.getId();
 	}
 	public static int sendSubmissionToIAR(OCANv2SubmissionFileDocument submissionDoc) {
-		return prepareSubmissionToIAR(submissionDoc, true, null) ;
+		return prepareSubmissionToIAR(submissionDoc, false, null) ;
 	}		
 
 	public static void writeExportIar(OutputStream out) {
@@ -739,7 +778,7 @@ public class OcanReportUIBean implements CallbackHandler {
 			idPrefix = idPrefix.concat(String.valueOf(ocanStaffForm.getAssessmentId()));
 			ocanSubmissionRecord.setAssessmentID(idPrefix);
 		}
-			
+		
 		ocanSubmissionRecord.setAssessmentRevision("1");
 
 		ocanSubmissionRecord.setStartDate(convertToOcanXmlDate(OcanForm.getAssessmentStartDate(ocanStaffForm.getStartDate(),ocanStaffForm.getClientStartDate())));

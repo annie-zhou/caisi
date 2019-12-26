@@ -33,10 +33,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
-import org.oscarehr.ocan.OCANv2SubmissionFileDocument;
 import org.oscarehr.util.MiscUtils;
 
-import ca.ehealthontario.ccim.OCANSubmissionFileDocument;
 import oscar.OscarProperties;
 
 public class OcanIarSubmitAction extends DispatchAction {
@@ -44,22 +42,6 @@ public class OcanIarSubmitAction extends DispatchAction {
 	Logger logger = MiscUtils.getLogger();
 	
 	public ActionForward submit(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-		
-		int submissionId_full = OcanReportUIBean.sendSubmissionToIAR(OcanReportUIBean.generateOCANSubmission("FULL"));
-		
-		try {
-			response.getWriter().println(submissionId_full);
-		}catch(IOException e) {
-			logger.error("Error",e);
-		}
-		
-		int submissionId_self = OcanReportUIBean.sendSubmissionToIAR(OcanReportUIBean.generateOCANSubmission("SELF"));
-		
-		try {
-			response.getWriter().println(submissionId_self);
-		}catch(IOException e) {
-			logger.error("Error:",e);
-		}
 		
 		String ocanVersionStr = "";
 		int ocanVersion = 0;
@@ -69,11 +51,35 @@ public class OcanIarSubmitAction extends DispatchAction {
 			ocanVersion = Double.valueOf(ocanVersionStr).intValue();
 		}
 		
-		OCANSubmissionFileDocument ocanSubmissionFileDocument  = OcanReportUIBeanV3.generateOCANSubmission("CORE");
-		int submissionId_core_v3 = OcanReportUIBeanV3.sendSubmissionToIAR(ocanSubmissionFileDocument);
+		int submissionId_full = 0;
+		if(ocanVersion==3)
+			submissionId_full = OcanReportUIBeanV3.sendSubmissionToIAR(OcanReportUIBeanV3.generateOCANSubmission("FULL"), "FULL");
+		else
+			submissionId_full = OcanReportUIBean.sendSubmissionToIAR(OcanReportUIBean.generateOCANSubmission("FULL"), "FULL");
 		
-		OCANv2SubmissionFileDocument ocaNv2SubmissionFileDocument = OcanReportUIBean.generateOCANSubmission("CORE");
-		int submissionId_core = OcanReportUIBean.sendSubmissionToIAR(ocaNv2SubmissionFileDocument);			
+		try {
+			response.getWriter().println(submissionId_full);
+		}catch(IOException e) {
+			logger.error("Error",e);
+		}
+		
+		int submissionId_self = 0;
+		if(ocanVersion==3)
+			submissionId_self = OcanReportUIBeanV3.sendSubmissionToIAR(OcanReportUIBeanV3.generateOCANSubmission("SELF"));
+		else
+			submissionId_self = OcanReportUIBean.sendSubmissionToIAR(OcanReportUIBean.generateOCANSubmission("SELF"));
+		
+		try {
+			response.getWriter().println(submissionId_self);
+		}catch(IOException e) {
+			logger.error("Error:",e);
+		}
+		
+		int submissionId_core = 0;
+		if(ocanVersion==3)
+			submissionId_core = OcanReportUIBeanV3.sendSubmissionToIAR(OcanReportUIBeanV3.generateOCANSubmission("CORE"));			
+		else
+			submissionId_core = OcanReportUIBean.sendSubmissionToIAR(OcanReportUIBean.generateOCANSubmission("CORE"));
 		
 		try {
 			response.getWriter().println(submissionId_core);

@@ -1,8 +1,6 @@
 package org.oscarehr.web;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
@@ -93,6 +91,7 @@ import ca.ehealthontario.ccim.DiscrimExpListDocument.DiscrimExpList;
 import ca.ehealthontario.ccim.DoctorContactDocument.DoctorContact;
 import ca.ehealthontario.ccim.DomainActionsDocument.DomainActions;
 import ca.ehealthontario.ccim.DomainCommentsFull;
+import ca.ehealthontario.ccim.DomainCommentsSelf;
 import ca.ehealthontario.ccim.DrinkAlcoholDocument.DrinkAlcohol;
 import ca.ehealthontario.ccim.DrugUseDocument.DrugUse;
 import ca.ehealthontario.ccim.DrugUseListDocument.DrugUseList;
@@ -117,9 +116,11 @@ import ca.ehealthontario.ccim.MedicalConditionListDocument.MedicalConditionList;
 import ca.ehealthontario.ccim.MedicationDetailDocument.MedicationDetail;
 import ca.ehealthontario.ccim.MedicationListDocument.MedicationList;
 import ca.ehealthontario.ccim.NeedRatingFull;
+import ca.ehealthontario.ccim.NeedRatingSelf;
 import ca.ehealthontario.ccim.OCANCoreSubmissionRecordDocument.OCANCoreSubmissionRecord;
 import ca.ehealthontario.ccim.OCANFullSubmissionRecordDocument.OCANFullSubmissionRecord;
 import ca.ehealthontario.ccim.OCANFullSubmissionRecordDocument.OCANFullSubmissionRecord.OCANDomains;
+import ca.ehealthontario.ccim.OCANSelfSubmissionRecordDocument.OCANSelfSubmissionRecord;
 import ca.ehealthontario.ccim.OCANSubmissionFileDocument;
 import ca.ehealthontario.ccim.OCANSubmissionFileDocument.OCANSubmissionFile;
 import ca.ehealthontario.ccim.OCANSubmissionRecordType;
@@ -145,6 +146,9 @@ import ca.ehealthontario.ccim.ReferralListDocument.ReferralList;
 import ca.ehealthontario.ccim.ResidenceTypeDocument.ResidenceType;
 import ca.ehealthontario.ccim.SafetyToSelfRiskDocument.SafetyToSelfRisk;
 import ca.ehealthontario.ccim.SafetyToSelfRiskListDocument.SafetyToSelfRiskList;
+import ca.ehealthontario.ccim.SelfClientRecordType;
+import ca.ehealthontario.ccim.SelfDomainItemType;
+import ca.ehealthontario.ccim.SelfadditionalElementsType;
 import ca.ehealthontario.ccim.ServiceOrgDocument.ServiceOrg;
 import ca.ehealthontario.ccim.ServiceUseRecord;
 import ca.ehealthontario.ccim.ServiceUseRecordListDocument.ServiceUseRecordList;
@@ -283,7 +287,10 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 
 		submissionFile.setTimestamp(convertToOcanXmlCalendar(new Date()));
 
-		List<OCANCoreSubmissionRecord> submissionRecordList = new ArrayList<OCANCoreSubmissionRecord>();
+		List<OCANCoreSubmissionRecord> submissionRecordList_core = new ArrayList<OCANCoreSubmissionRecord>();
+		List<OCANFullSubmissionRecord> submissionRecordList_full = new ArrayList<OCANFullSubmissionRecord>();
+		List<OCANSelfSubmissionRecord> submissionRecordList_self = new ArrayList<OCANSelfSubmissionRecord>();
+		
 		for(OcanStaffForm staffForm:ocanStaffForms) {
 			//If ReasonForAssessment is Review or Re-key, this ocan should not be included in xml file.
 			String answer = staffForm.getReasonForAssessment();
@@ -297,32 +304,27 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 			if(!isEmpty(ocanType)){
 				if(ocanType.equalsIgnoreCase("CORE")) {
 					OCANCoreSubmissionRecord submissionRecord = convertOcanForm_core(staffForm,ocanStaffFormDataDao.findByForm(staffForm.getId()),clientForm,clientFormData, ocanType);
-					submissionRecordList.add(submissionRecord);					
+					submissionRecordList_core.add(submissionRecord);					
+				}else if(ocanType.equalsIgnoreCase("FULL")) {
+					OCANFullSubmissionRecord submissionRecord = convertOcanForm_full(staffForm,ocanStaffFormDataDao.findByForm(staffForm.getId()),clientForm,clientFormData, ocanType);
+					submissionRecordList_full.add(submissionRecord);					
+				}else if(ocanType.equalsIgnoreCase("SELF")) {
+					OCANSelfSubmissionRecord submissionRecord = convertOcanForm_self(staffForm,ocanStaffFormDataDao.findByForm(staffForm.getId()),clientForm,clientFormData, ocanType);
+					submissionRecordList_self.add(submissionRecord);					
 				}
 			}
 		}
-		submissionFile.setOCANCoreSubmissionRecordArray(submissionRecordList.toArray(new OCANCoreSubmissionRecord[submissionRecordList.size()]));
+		submissionFile.setOCANCoreSubmissionRecordArray(submissionRecordList_core.toArray(new OCANCoreSubmissionRecord[submissionRecordList_core.size()]));
+		submissionFile.setOCANFullSubmissionRecordArray(submissionRecordList_full.toArray(new OCANFullSubmissionRecord[submissionRecordList_full.size()]));
+		submissionFile.setOCANSelfSubmissionRecordArray(submissionRecordList_self.toArray(new OCANSelfSubmissionRecord[submissionRecordList_self.size()]));
+		
 		submissionFileDoc.setOCANSubmissionFile(submissionFile);
 
 		return submissionFileDoc;
 	}
-	
-	private static void writeFile(String fileData, String filename, String ocanVersion)
-	{
-		try {
-			File file = new File("/rp/annie/temp/"+filename+"_"+ocanVersion+"_"+System.currentTimeMillis());
-			if(!file.exists())
-				file.createNewFile();
 
-			FileWriter fileWriter = new FileWriter(file);
-			fileWriter.write(fileData);
-			fileWriter.flush();
-			fileWriter.close();
-			
-			System.out.println("file has been written: "+file.getAbsolutePath());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public static int sendSubmissionToIAR(OCANSubmissionFileDocument submissionDoc, String ocanType) {
+		return prepareSubmissionToIAR(submissionDoc, false, null, ocanType) ;
 	}
 	
 	public static int sendSubmissionToIAR(OCANSubmissionFileDocument submissionDoc) {
@@ -330,6 +332,10 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 	}
 	
 	public static int prepareSubmissionToIAR(OCANSubmissionFileDocument submissionDoc, boolean autoSubmit, OutputStream out ) {
+		return prepareSubmissionToIAR(submissionDoc, autoSubmit, out, null);
+	}
+	
+	public static int prepareSubmissionToIAR(OCANSubmissionFileDocument submissionDoc, boolean autoSubmit, OutputStream out, String ocanType ) {
 		if(isEmpty(submissionDoc.getOCANSubmissionFile().getOCANCoreSubmissionRecordArray()) && isEmpty(submissionDoc.getOCANSubmissionFile().getOCANFullSubmissionRecordArray())
 				&& isEmpty(submissionDoc.getOCANSubmissionFile().getOCANSelfSubmissionRecordArray())) {
 			logger.info("No records to send");
@@ -352,7 +358,7 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 			options.setSaveImplicitNamespaces(implicitNamespaces);
 			submissionDoc.save(sos,options);
 			
-			writeFile(sos.toString(), "ocan_submissionDoc", "3.0");
+			//OcanReportUIBean.writeFile(sos.toString(), "ocan_submissionDoc", "3.0", ocanType);
 		}catch(IOException e) {
 			logger.error("Error:",e);
 			return 0;
@@ -526,16 +532,16 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		  }
 		} else {
 			try {
-
-			    JAXBContext context = JAXBContext.newInstance(IARSubmission.class);
-		        Marshaller marshaller = context.createMarshaller();
-		        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		        marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new NamespacePrefixmapperImpl() );
-		        marshaller.marshal(is, out);
-
-		        log.setResult("true");
-		        log.setResultMessage("Manual Export");
-		        log.setTransactionId("");
+			    if (out!=null) {
+					JAXBContext context = JAXBContext.newInstance(IARSubmission.class);
+					Marshaller marshaller = context.createMarshaller();
+					marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+					marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new NamespacePrefixmapperImpl());
+					marshaller.marshal(is, out);
+					log.setResult("true");
+					log.setResultMessage("Manual Export");
+					log.setTransactionId("");
+				}
 			}
 			catch(Exception e) {
 				logger.error("Error",e);
@@ -631,6 +637,41 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		ocanSubmissionRecord.setClientRecord(convertClientRecord_full(ocanStaffForm,ocanStaffFormData,ocanType));
 		ocanSubmissionRecord.setOCANDomains(convertOCANDomains_full(ocanStaffForm,ocanStaffFormData, ocanClientForm, ocanClientFormData, ocanType));
 		ocanSubmissionRecord.setAdditionalElements(convertAdditionalElements_full(ocanStaffForm,ocanStaffFormData,ocanType));
+		
+		return ocanSubmissionRecord;
+	}
+	
+	public static OCANSelfSubmissionRecord convertOcanForm_self(OcanStaffForm ocanStaffForm, List<OcanStaffFormData> ocanStaffFormData, OcanClientForm ocanClientForm, List<OcanClientFormData> ocanClientFormData, String ocanType) {
+		OCANSelfSubmissionRecord ocanSubmissionRecord = OCANSelfSubmissionRecord.Factory.newInstance();
+
+		ocanSubmissionRecord.setOCANType(OCANSubmissionRecordType.OCANType.Enum.forString(ocanStaffForm.getOcanType()));
+
+		//ocanSubmissionRecord.setAssessmentID(String.valueOf(ocanStaffForm.getAssessmentId()));
+		//If the IAR submission is being done by two organizations to CCIM under the organization ID of one of the organizations. 
+		//They don't want clients to accidentally have the same ID from the two organizations. 
+		//So they want to add the prefix "TWC" to the ID's of one of The Working Centre submission.
+		//The prefix should be stored in the oscar property file so that in the future other organizations can change that property and do a similar thing if needed,
+		String idPrefix = OscarProperties.getInstance().getProperty("ocan.iar.idPrefix");
+		if(StringUtils.isBlank(idPrefix)) {
+			ocanSubmissionRecord.setAssessmentID(String.valueOf(ocanStaffForm.getAssessmentId()));
+		}
+		else {
+			idPrefix = idPrefix.concat(String.valueOf(ocanStaffForm.getAssessmentId()));
+			ocanSubmissionRecord.setAssessmentID(idPrefix);
+		}
+			
+		ocanSubmissionRecord.setAssessmentRevision("1");
+
+		ocanSubmissionRecord.setStartDate(convertToOcanXmlCalendar(OcanForm.getAssessmentStartDate(ocanStaffForm.getStartDate(),ocanStaffForm.getClientStartDate())));
+		ocanSubmissionRecord.setCompletionDate(convertToOcanXmlCalendar(OcanForm.getAssessmentCompletionDate(ocanStaffForm.getCompletionDate(),ocanStaffForm.getClientCompletionDate())));
+
+		ocanSubmissionRecord.setAssessmentStatus(OCANSubmissionRecordType.AssessmentStatus.COMPLETE);
+		//ocanSubmissionRecord.setIARViewingConsent(OCANSubmissionRecordType.IARViewingConsent.Enum.forString("TRUE"));
+
+		ocanSubmissionRecord.setSubmitOrganizationRecord(convertSubmitOrganizationRecord(ocanStaffForm,ocanStaffFormData));
+		ocanSubmissionRecord.setClientRecord(convertClientRecord_self(ocanStaffForm,ocanStaffFormData,ocanType));
+		ocanSubmissionRecord.setOCANDomains(convertOCANDomains_self(ocanStaffForm,ocanStaffFormData, ocanClientForm, ocanClientFormData, ocanType));
+		ocanSubmissionRecord.setAdditionalElements(convertAdditionalElements_self(ocanStaffForm,ocanStaffFormData,ocanType));
 		
 		return ocanSubmissionRecord;
 	}
@@ -799,39 +840,135 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		clientRecord.setTimeLivedInCanada(convertTimeLivedInCanada(ocanStaffForm,ocanStaffFormData));
 
 		if("FULL".equals(ocanType)) {
-		List<String> immigrationExpAnswers = getMultipleStaffAnswer("immigration_issues",ocanStaffFormData);
-		if(immigrationExpAnswers.size()>0) {
-			ImmigExpList immigExpList = ImmigExpList.Factory.newInstance();
-			List<ImmigExpList.Value.Enum> immigExpListEnum = new ArrayList<ImmigExpList.Value.Enum>();
-			for(String answer:immigrationExpAnswers) {
-
-				//immigExpList.addValue(ImmigExpList.Value.Enum.forString(answer));
-				immigExpListEnum.add(ImmigExpList.Value.Enum.forString(answer));
-			}
-			immigExpList.setValueArray(immigExpListEnum.toArray(new ImmigExpList.Value.Enum[immigrationExpAnswers.size()] ));
-			immigExpList.setOtherImmigExp(getStaffAnswer("immigration_issues_other",ocanStaffFormData));
-			if(immigExpList!=null) {
-				clientRecord.setImmigExpList(immigExpList);
-			}
-		}
-		clientRecord.setImmigExpFreeText(getStaffAnswer("immigration_experience",ocanStaffFormData));
-
-		List<String> discriminationExpAnswers = getMultipleStaffAnswer("discrimination",ocanStaffFormData);
-		if(discriminationExpAnswers.size()>0) {
-			DiscrimExpList discrimExpList = null;
-			for(String answer:discriminationExpAnswers) {
-				if(discrimExpList==null) {
-					discrimExpList = DiscrimExpList.Factory.newInstance();
+			List<String> immigrationExpAnswers = getMultipleStaffAnswer("immigration_issues",ocanStaffFormData);
+			if(immigrationExpAnswers.size()>0) {
+				ImmigExpList immigExpList = ImmigExpList.Factory.newInstance();
+				List<ImmigExpList.Value.Enum> immigExpListEnum = new ArrayList<ImmigExpList.Value.Enum>();
+				for(String answer:immigrationExpAnswers) {
+	
+					//immigExpList.addValue(ImmigExpList.Value.Enum.forString(answer));
+					immigExpListEnum.add(ImmigExpList.Value.Enum.forString(answer));
 				}
-				discrimExpList.addValue(DiscrimExpList.Value.Enum.forString(answer));
+				immigExpList.setValueArray(immigExpListEnum.toArray(new ImmigExpList.Value.Enum[immigrationExpAnswers.size()] ));
+				immigExpList.setOtherImmigExp(getStaffAnswer("immigration_issues_other",ocanStaffFormData));
+				if(immigExpList!=null) {
+					clientRecord.setImmigExpList(immigExpList);
+				}
 			}
+			clientRecord.setImmigExpFreeText(getStaffAnswer("immigration_experience",ocanStaffFormData));
+	
+			List<String> discriminationExpAnswers = getMultipleStaffAnswer("discrimination",ocanStaffFormData);
+			if(discriminationExpAnswers.size()>0) {
+				DiscrimExpList discrimExpList = null;
+				for(String answer:discriminationExpAnswers) {
+					if(discrimExpList==null) {
+						discrimExpList = DiscrimExpList.Factory.newInstance();
+					}
+					discrimExpList.addValue(DiscrimExpList.Value.Enum.forString(answer));
+				}
+	
+				discrimExpList.setOtherDiscrimExp(getStaffAnswer("discrimination_other",ocanStaffFormData));
+				if(discrimExpList!=null) {
+					clientRecord.setDiscrimExpList(discrimExpList);
+				}
+			}
+		}
 
-			discrimExpList.setOtherDiscrimExp(getStaffAnswer("discrimination_other",ocanStaffFormData));
-			if(discrimExpList!=null) {
-				clientRecord.setDiscrimExpList(discrimExpList);
+		ca.ehealthontario.ccim.PrefLangDocument.PrefLang prefLang = ca.ehealthontario.ccim.PrefLangDocument.PrefLang.Factory.newInstance();
+		prefLang.setValue(ca.ehealthontario.ccim.OCANLanguageListType.Enum.forString(getStaffAnswer("preferred_language",ocanStaffFormData)));
+		clientRecord.setPrefLang(prefLang);
+		
+		ca.ehealthontario.ccim.ServiceLangDocument.ServiceLang serviceLang = ca.ehealthontario.ccim.ServiceLangDocument.ServiceLang.Factory.newInstance();
+		serviceLang.setValue(ca.ehealthontario.ccim.OCANLanguageListType.Enum.forString(getStaffAnswer("language_service_provision",ocanStaffFormData)));
+		clientRecord.setServiceLang(serviceLang);
+			
+		List<String> legalIssuesList = getMultipleStaffAnswer("legal_issues",ocanStaffFormData);
+		if(!isEmpty(legalIssuesList)) {
+			LegalIssuesList legalIssuesList2 = LegalIssuesList.Factory.newInstance();
+			
+			for (String legalIssue : legalIssuesList) {
+				legalIssuesList2.addLegalIssue(ca.ehealthontario.ccim.LegalIssuesListDocument.LegalIssuesList.LegalIssue.Enum.forString(legalIssue));
 			}
+			
+			clientRecord.setLegalIssuesList(legalIssuesList2);
 		}
+		clientRecord.setLegalIssuesComments(getStaffAnswer("legal_issues_other",ocanStaffFormData));
+		
+		List<String> legalStatusAnswers = getMultipleStaffAnswer("legal_status",ocanStaffFormData);
+		if(!isEmpty(legalStatusAnswers)) {
+			LegalStatusList legalStatusList = LegalStatusList.Factory.newInstance();
+			
+			for (String legalStatusAnswer : legalStatusAnswers) {
+				legalStatusList.addLegalStatus(ca.ehealthontario.ccim.LegalStatusDocument.LegalStatus.Enum.forString(legalStatusAnswer));
+			}
+			
+			clientRecord.setLegalStatusList(legalStatusList);
 		}
+		
+		clientRecord.setGeneralComments(getStaffAnswer("commments",ocanStaffFormData));
+		
+		ca.ehealthontario.ccim.MotherTongueDocument.MotherTongue motherTongue = ca.ehealthontario.ccim.MotherTongueDocument.MotherTongue.Factory.newInstance();
+		motherTongue.setValue(ca.ehealthontario.ccim.OCANLanguageListType.Enum.forString(getStaffAnswer("Language",ocanStaffFormData)));
+		clientRecord.setMotherTongue(motherTongue);
+		
+		clientRecord.setPrefOfficialLang(ca.ehealthontario.ccim.PrefOfficialLangDocument.PrefOfficialLang.Enum.forString(getStaffAnswer("language_comfortable",ocanStaffFormData)));
+
+		return clientRecord;
+	}
+	
+	public static SelfClientRecordType convertClientRecord_self(OcanStaffForm ocanStaffForm, List<OcanStaffFormData> ocanStaffFormData, String ocanType) {
+		SelfClientRecordType clientRecord = SelfClientRecordType.Factory.newInstance();
+		clientRecord.setClientID(convertClientID(ocanStaffForm,ocanStaffFormData));
+
+		//START OF PHI
+		if(!"".equals(getStaffAnswer("completedByOCANLead",ocanStaffFormData))) {
+			clientRecord.setCompletedByOCANLead(CompletedByOCANLead.Enum.forString(getStaffAnswer("completedByOCANLead",ocanStaffFormData)));
+		}
+		clientRecord.setClientName(convertClientName(ocanStaffForm,ocanStaffFormData));
+
+		clientRecord.setClientAddress(convertClientAddress(ocanStaffForm,ocanStaffFormData));
+		if(!"TRUE".equalsIgnoreCase(getStaffAnswer("consumerAnonymous",ocanStaffFormData))) {
+				clientRecord.setClientEmailAddress(getStaffAnswer("email",ocanStaffFormData));
+		}else{
+			clientRecord.setClientEmailAddress("");
+		}
+		clientRecord.setClientPhone(convertClientPhone(ocanStaffForm,ocanStaffFormData));
+		clientRecord.setClientHealthCardInfo(convertClientHealthCardInfo(ocanStaffForm,ocanStaffFormData));
+
+		ClientCultureDocument.ClientCulture clientCulture = ClientCultureDocument.ClientCulture.Factory.newInstance();
+		clientCulture.setValue(ClientCultureDocument.ClientCulture.Value.Enum.forString(getStaffAnswer("culture",ocanStaffFormData)));
+		clientCulture.setOther(getStaffAnswer("cultureother",ocanStaffFormData));
+		clientRecord.setClientCulture(clientCulture);
+
+		if("FULL".equals(ocanType)) {
+				//clientRecord.setConsumerSelfAxCompleted(ConsumerSelfAxCompleted.Enum.forString(getStaffAnswer("consumerSelfAxCompleted",ocanStaffFormData)));
+				//clientRecord.setReasonConsumerSelfAxNotCompletedList(convertReasonConsumerSelfAxNotCompletedList(ocanStaffFormData));
+		}
+
+		clientRecord.setReasonForOCAN(convertReasonForOCAN(ocanStaffForm,ocanStaffFormData));
+		clientRecord.setClientContact(convertClientContact(ocanStaffForm,ocanStaffFormData));
+		clientRecord.setServiceRecipientLocation(ca.ehealthontario.ccim.ServiceLocationListType.Enum.forString(getStaffAnswer("service_recipient_location",ocanStaffFormData)));
+		clientRecord.setServiceRecipientLHIN(ca.ehealthontario.ccim.LHINListType.Enum.forString(getStaffAnswer("service_recipient_lhin",ocanStaffFormData)));
+		clientRecord.setClientDOB(convertClientDOB(ocanStaffForm, ocanStaffFormData));
+		
+		ca.ehealthontario.ccim.GenderDocument.Gender gender = ca.ehealthontario.ccim.GenderDocument.Gender.Factory.newInstance();
+		gender.setValue(ca.ehealthontario.ccim.GenderDocument.Gender.Value.Enum.forString(ocanStaffForm.getGender()));
+		clientRecord.setGender(gender);
+
+		if(!"TRUE".equalsIgnoreCase(getStaffAnswer("consumerAnonymous",ocanStaffFormData))) {
+			clientRecord.setMaritalStatus(ca.ehealthontario.ccim.MaritalStatusDocument.MaritalStatus.Enum.forString(getStaffAnswer("marital_status",ocanStaffFormData)));
+		}else{
+			clientRecord.setMaritalStatus(ca.ehealthontario.ccim.MaritalStatusDocument.MaritalStatus.Enum.forString(""));
+		}
+
+		clientRecord.setServiceUseRecordList(convertServiceUseRecordList(ocanStaffFormData));
+		clientRecord.setClientCapacity(convertClientCapacity(ocanStaffForm,ocanStaffFormData));
+		clientRecord.setAgeOnsetMental(convertAgeOnsetMental(ocanStaffForm,ocanStaffFormData));
+		clientRecord.setAgeHospitalization(convertAgeHospitalization(ocanStaffForm,ocanStaffFormData));
+		clientRecord.setFirstEntryDate(convertFirstEntryDate(ocanStaffForm,ocanStaffFormData));
+		//clientRecord.setAboriginalOrigin(AboriginalOrigin.Enum.forString(getStaffAnswer("aboriginal",ocanStaffFormData)));
+		clientRecord.setCitizenshipStatus(ca.ehealthontario.ccim.CitizenshipStatusDocument.CitizenshipStatus.Enum.forString(getStaffAnswer("citizenship_status",ocanStaffFormData)));
+		clientRecord.setTimeLivedInCanada(convertTimeLivedInCanada(ocanStaffForm,ocanStaffFormData));
 
 		ca.ehealthontario.ccim.PrefLangDocument.PrefLang prefLang = ca.ehealthontario.ccim.PrefLangDocument.PrefLang.Factory.newInstance();
 		prefLang.setValue(ca.ehealthontario.ccim.OCANLanguageListType.Enum.forString(getStaffAnswer("preferred_language",ocanStaffFormData)));
@@ -1231,6 +1368,23 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		return additionalElements;
 	}
 	
+	public static SelfadditionalElementsType convertAdditionalElements_self(OcanStaffForm ocanStaffForm, List<OcanStaffFormData> ocanStaffFormData, String ocanType) {
+		SelfadditionalElementsType additionalElements = SelfadditionalElementsType.Factory.newInstance();
+		
+		if(!"CORE".equals(ocanType)) {
+			additionalElements.setClientHopesForFuture(convertClientHopesForFuture(ocanStaffForm,ocanStaffFormData, ocanType));
+			additionalElements.setClientNeedToGetThere(convertClientNeedToGetThere(ocanStaffForm,ocanStaffFormData, ocanType));
+			//additionalElements.setClientViewMentalHealth(convertClientViewMentalHealth(ocanStaffForm,ocanStaffFormData, ocanType));
+			additionalElements.setClientSpiritualityImportance(convertClientSpiritualityImportance(ocanStaffForm,ocanStaffFormData, ocanType));
+			additionalElements.setClientCultureHeritageImportance(convertClientCultureHeritageImportance(ocanStaffForm,ocanStaffFormData, ocanType));
+		}
+
+		PresentingIssueList presentingIssueList = getPresentingIssueList(ocanStaffFormData);
+		additionalElements.setPresentingIssueList(presentingIssueList);
+
+		return additionalElements;
+	}
+	
 	public static ClientCultureHeritageImportance convertClientCultureHeritageImportance(OcanStaffForm ocanStaffForm,List<OcanStaffFormData> ocanStaffFormData, String ocanType) {
 		ClientCultureHeritageImportance cntgt = ClientCultureHeritageImportance.Factory.newInstance();
 
@@ -1374,6 +1528,22 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 			}
 			
 			ocanDomains.setDomainArray(domainList.toArray(new FullDomainItemType[domainList.size()]));
+		} 
+		
+		return ocanDomains;
+	}
+	
+	public static ca.ehealthontario.ccim.OCANSelfSubmissionRecordDocument.OCANSelfSubmissionRecord.OCANDomains convertOCANDomains_self(OcanStaffForm ocanStaffForm, List<OcanStaffFormData> ocanStaffFormData, OcanClientForm ocanClientForm, List<OcanClientFormData> ocanClientFormData, String ocanType) {
+		ca.ehealthontario.ccim.OCANSelfSubmissionRecordDocument.OCANSelfSubmissionRecord.OCANDomains ocanDomains = ca.ehealthontario.ccim.OCANSelfSubmissionRecordDocument.OCANSelfSubmissionRecord.OCANDomains.Factory.newInstance();
+
+		if("FULL".equals(ocanType) || "SELF".equals(ocanType)) {
+			List<SelfDomainItemType> domainList = new ArrayList<SelfDomainItemType>();
+
+			for(int x=0;x<24;x++) {
+				domainList.add(convertOCANDomain_self(x+1,ocanStaffForm,ocanStaffFormData,ocanClientForm, ocanClientFormData, ocanType));
+			}
+			
+			ocanDomains.setDomainArray(domainList.toArray(new SelfDomainItemType[domainList.size()]));
 		} 
 		
 		return ocanDomains;
@@ -1565,6 +1735,118 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 
 		return domain;
 	}
+	
+	public static SelfDomainItemType convertOCANDomain_self(int domainNumber,OcanStaffForm ocanStaffForm, List<OcanStaffFormData> ocanStaffFormData, OcanClientForm ocanClientForm, List<OcanClientFormData> ocanClientFormData, String ocanType) {
+		SelfDomainItemType domain = SelfDomainItemType.Factory.newInstance();
+
+		if("FULL".equals(ocanType) || "SELF".equals(ocanType)) {
+			domain.setName(ca.ehealthontario.ccim.DomainNameList.Enum.forString(getDomainName(domainNumber)));
+			domain.setDomainComments(convertDomainComments_self(String.valueOf(domainNumber),ocanStaffFormData,ocanClientForm, ocanClientFormData, ocanType));
+		}
+
+		if(!"CORE".equals(ocanType)) {
+			NeedRatingSelf needRating = convertNeedRating_self(domainNumber,ocanStaffForm,ocanStaffFormData, ocanClientForm, ocanClientFormData, ocanType);
+			domain.setNeedRating(needRating);
+		}
+
+		switch(domainNumber) {
+
+		case 1:
+			domain.setResidenceType(convertResidenceType(ocanStaffForm,ocanStaffFormData));
+			domain.setResidenceSupport(ca.ehealthontario.ccim.ResidenceSupportDocument.ResidenceSupport.Enum.forString(getStaffAnswer("1_any_support",ocanStaffFormData)));
+			
+			List<String> livingArrangements = getMultipleStaffAnswer("1_live_with_anyone", ocanStaffFormData);
+			if(!isEmpty(livingArrangements))
+			{
+				LivingArrangementList livingArrangementList = LivingArrangementList.Factory.newInstance();
+				List<LivingArrangementType> arrangementTypes = new ArrayList<LivingArrangementType>();
+				
+				for (String livingArrangement : livingArrangements) {
+					LivingArrangementType livingArrangementType = LivingArrangementType.Factory.newInstance();
+					livingArrangementType.setValue(ca.ehealthontario.ccim.LivingArrangementTypeDocument.LivingArrangementType.Value.Enum.forString(livingArrangement));
+					
+					arrangementTypes.add(livingArrangementType);
+				}
+				
+				livingArrangementList.setLivingArrangementTypeArray(arrangementTypes.toArray(new LivingArrangementType[] {}));
+				domain.setLivingArrangementList(livingArrangementList);
+			}
+			
+			break;
+
+		case 5:
+			domain.setEmployStatus(ca.ehealthontario.ccim.EmployStatusDocument.EmployStatus.Enum.forString(getStaffAnswer("5_current_employment_status",ocanStaffFormData)));
+			domain.setEducationProgramStatus(convertEducationProgramStatus(ocanStaffForm,ocanStaffFormData));
+
+			break;
+
+		case 6:
+			break;
+
+		case 7:
+			domain.setHospitalizedPastTwoYears(HospitalizedPastTwoYears.Enum.forString(getStaffAnswer("hospitalized_mental_illness",ocanStaffFormData)));
+			String totalAdmissions = getStaffAnswer("hospitalized_mental_illness_admissions",ocanStaffFormData);
+			if(totalAdmissions!=null&&totalAdmissions.length()>0) {
+				domain.setTotalAdmissions(new BigInteger(totalAdmissions));
+			} else {
+				domain.setTotalAdmissions(new BigInteger("0"));
+			}
+			String totalHospitalDays = getStaffAnswer("hospitalized_mental_illness_days",ocanStaffFormData);
+			if(totalHospitalDays!=null&&totalHospitalDays.length()>0) {
+				domain.setTotalHospitalDays(new BigInteger(totalHospitalDays));
+			} else {
+				domain.setTotalHospitalDays(new BigInteger("0"));
+			}
+			domain.setCommunityTreatOrder(CommunityTreatOrder.Enum.forString(getStaffAnswer("community_treatment_orders",ocanStaffFormData)));
+
+			domain.setVisitEmergencyDepartment(ca.ehealthontario.ccim.VisitEmergencyDepartmentDocument.VisitEmergencyDepartment.Enum.forString(getStaffAnswer("visitEmergencyDepartment",ocanStaffFormData)));
+
+			break;
+
+		case 8:
+
+			DiagnosticList diagnosticList = getDiagnosticList(ocanStaffFormData);
+			//if(diagnosticList.getDiagnosticList().size()>0) {
+			if(diagnosticList.getDiagnosticArray().length>0) {
+				domain.setDiagnosticList(diagnosticList);
+			}
+
+			OtherIllnessList otherIllnessList = getOtherIllnessList(ocanStaffFormData);
+			//if(otherIllnessList.getOtherIllnessList().size()>0) {
+			if(otherIllnessList.getOtherIllnessArray().length>0) {
+				domain.setOtherIllnessList(otherIllnessList);
+			}
+
+			break;
+
+		case 10:
+			break;
+
+		case 12:
+			break;
+
+		case 13:
+			break;
+
+		case 14:
+			break;
+
+		case 15:
+			break;
+
+		case 20:
+			domain.setHighestEducationLevel(ca.ehealthontario.ccim.HighestEducationLevelDocument.HighestEducationLevel.Enum.forString(getStaffAnswer("level_of_education",ocanStaffFormData)));
+			break;
+
+		case 23:
+			domain.setSourceOfIncome(convertSourceOfIncome(ocanStaffForm,ocanStaffFormData));
+
+			break;
+		}
+
+		return domain;
+	}
+	
 	
 	public static AddictionTypeList getAddictionTypeList(List<OcanStaffFormData> ocanStaffFormData) {
 		AddictionTypeList addictionTypeList = AddictionTypeList.Factory.newInstance();
@@ -1815,6 +2097,24 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		return needRating;
 	}
 	
+	public static NeedRatingSelf convertNeedRating_self(int domainNumber,OcanStaffForm ocanStaffForm, List<OcanStaffFormData> ocanStaffFormData, OcanClientForm ocanClientForm, List<OcanClientFormData> ocanClientFormData, String ocanType) {
+		NeedRatingSelf needRating = NeedRatingSelf.Factory.newInstance();
+
+		if("FULL".equals(ocanType)) {
+			
+		} else if("SELF".equals(ocanType)) {
+			String clientAnswer = getStaffAnswer("client_"+domainNumber+"_1",ocanStaffFormData);
+			if(clientAnswer.length()>0) {
+				needRating.setClient(Byte.valueOf(clientAnswer));
+			} else {
+				needRating.setClient((byte)-1);
+			}
+
+		}
+
+		return needRating;
+	}
+	
 	public static DomainActions convertDomainActions(String domainNumber,List<OcanStaffFormData> ocanStaffFormData) {
 		DomainActions domainActions = DomainActions.Factory.newInstance();
 
@@ -1846,6 +2146,15 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 				domainComments.setClient("");
 			}
 		} else if("SELF".equals(ocanType)) {
+			domainComments.setClient(getStaffAnswer("client_"+domainNumber+"_comments",ocanStaffFormData));
+		}
+
+		return domainComments;
+	}
+	
+	public static DomainCommentsSelf convertDomainComments_self(String domainNumber,List<OcanStaffFormData> ocanStaffFormData, OcanClientForm ocanClientForm, List<OcanClientFormData> ocanClientFormData, String ocanType) {
+		DomainCommentsSelf domainComments = DomainCommentsSelf.Factory.newInstance();
+		if("SELF".equals(ocanType)) {
 			domainComments.setClient(getStaffAnswer("client_"+domainNumber+"_comments",ocanStaffFormData));
 		}
 

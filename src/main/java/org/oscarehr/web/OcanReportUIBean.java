@@ -364,10 +364,10 @@ public class OcanReportUIBean implements CallbackHandler {
 		System.out.println("file has been written: "+file.getAbsolutePath());
 	}
 	
-	private static void writeFile(String fileData, String filename, String ocanVersion)
+	public static void writeFile(String fileData, String filename, String ocanVersion, String ocanType)
 	{
 		try {
-			File file = new File("/rp/annie/temp/"+filename+"_"+ocanVersion+"_"+System.currentTimeMillis());
+			File file = new File("/rp/annie/temp/"+filename+"_"+ocanType+"_"+ocanVersion+"_"+System.currentTimeMillis());
 			if(!file.exists())
 				file.createNewFile();
 
@@ -382,9 +382,11 @@ public class OcanReportUIBean implements CallbackHandler {
 		}
 	}
 	
-	
-	
 	public static int prepareSubmissionToIAR(OCANv2SubmissionFileDocument submissionDoc, boolean autoSubmit, OutputStream out ) {
+		return prepareSubmissionToIAR(submissionDoc, autoSubmit, out, null);
+	}
+	
+	public static int prepareSubmissionToIAR(OCANv2SubmissionFileDocument submissionDoc, boolean autoSubmit, OutputStream out, String ocanType ) {
 		if(submissionDoc.getOCANv2SubmissionFile().getOCANv2SubmissionRecordArray().length == 0) {
 			logger.info("No records to send");
 			return 0;
@@ -405,7 +407,7 @@ public class OcanReportUIBean implements CallbackHandler {
 			options.setSaveImplicitNamespaces(implicitNamespaces);
 			submissionDoc.save(sos,options);
 			
-			writeFile(sos.toString(), "ocan_submissionDoc", "1.2");
+			//writeFile(sos.toString(), "ocan_submissionDoc", "1.2", ocanType);
 		}catch(IOException e) {
 			logger.error("Error:",e);
 			return 0;
@@ -580,15 +582,18 @@ public class OcanReportUIBean implements CallbackHandler {
 		} else {
 			try {
 
-			    JAXBContext context = JAXBContext.newInstance(IARSubmission.class);
-		        Marshaller marshaller = context.createMarshaller();
-		        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		        marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new NamespacePrefixmapperImpl() );
-		        marshaller.marshal(is, out);
+				if(out!=null)
+				{
+					JAXBContext context = JAXBContext.newInstance(IARSubmission.class);
+			        Marshaller marshaller = context.createMarshaller();
+			        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			        marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new NamespacePrefixmapperImpl() );
+			        marshaller.marshal(is, out);
 
-		        log.setResult("true");
-		        log.setResultMessage("Manual Export");
-		        log.setTransactionId("");
+			        log.setResult("true");
+			        log.setResultMessage("Manual Export");
+			        log.setTransactionId("");					
+				}
 			}
 			catch(Exception e) {
 				logger.error("Error",e);
@@ -617,8 +622,13 @@ public class OcanReportUIBean implements CallbackHandler {
 
 		return log.getId();
 	}
+	
 	public static int sendSubmissionToIAR(OCANv2SubmissionFileDocument submissionDoc) {
-		return prepareSubmissionToIAR(submissionDoc, false, null) ;
+		return sendSubmissionToIAR(submissionDoc, null);
+	}
+	
+	public static int sendSubmissionToIAR(OCANv2SubmissionFileDocument submissionDoc, String ocanType) {
+		return prepareSubmissionToIAR(submissionDoc, false, null, ocanType) ;
 	}		
 
 	public static void writeExportIar(OutputStream out) {

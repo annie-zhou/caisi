@@ -447,15 +447,15 @@ Client date of birth : <%=ocanStaffForm.getClientDateOfBirth()%>
 			
 <form id="ocan_staff_form" name="ocan_staff_form" action="ocan_form_action.jsp" method="post" onsubmit="return submitOcanForm()">
 	<% if("FULL".equals(ocanType)) { %>
-	<h3>FULL OCAN 2.0 Staff Assessment</h3>	
+	<h3>FULL OCAN 3.0 Staff Assessment</h3>	
 	<br />
 	<% } %>
 	<% if("SELF".equals(ocanType)) { %>
-	<h3>SELF+CORE OCAN 2.0 Staff Assessment</h3>	
+	<h3>SELF+CORE OCAN 3.0 Staff Assessment</h3>	
 	<br />
 	<% } %>
 	<% if("CORE".equals(ocanType)) { %>
-	<h3>CORE OCAN 2.0 Staff Assessment</h3>	
+	<h3>CORE OCAN 3.0 Staff Assessment</h3>	
 	<br />
 	<% } %>
 	<input type="hidden" name="client_date_of_birth" id="client_date_of_birth" value="<%=ocanStaffForm.getClientDateOfBirth()%>" />

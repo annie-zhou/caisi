@@ -4084,33 +4084,38 @@ This information is collected from a variety of sources, including self-report, 
 			<td colspan="2" height="4"></td>
 		</tr>
 	<% } if(!"CORE".equals(ocanType)) { %>	
-		
 		<tr>
-			<td class="genericTableHeader">What are your hopes for the future?</td>
+			<td class="genericTableHeader">What are your strengths and skills?</td>
+			<td class="genericTableData">
+						<%=OcanForm.renderAsTextArea(ocanStaffForm.getId(),"strength_skills",5,50,prepopulationLevel)%>
+			</td>
+		</tr>
+		<tr>
+			<td class="genericTableHeader">What are your hopes and goals for the future?</td>
 			<td class="genericTableData">
 						<%=OcanForm.renderAsTextArea(ocanStaffForm.getId(),"hopes_future",5,50,prepopulationLevel)%>
 			</td>
 		</tr>
 		<tr>
-			<td class="genericTableHeader">What do you think you need in order to get there?</td>
+			<td class="genericTableHeader">What do you need to accomplish your hopes and goals?</td>
 			<td class="genericTableData">
 						<%=OcanForm.renderAsTextArea(ocanStaffForm.getId(),"hope_future_need",5,50,prepopulationLevel)%>
 			</td>
 		</tr>
-		<tr>
+		<%-- <tr>
 			<td class="genericTableHeader">How do you view your mental health?</td>
 			<td class="genericTableData">
 						<%=OcanForm.renderAsTextArea(ocanStaffForm.getId(),"view_mental_health",5,50,prepopulationLevel)%>
 			</td>
-		</tr>
+		</tr> --%>
 		<tr>
-			<td class="genericTableHeader">Is spirituality an important part of your life?</td>
+			<td class="genericTableHeader">Is spirituality an important part of your life? Please explain.</td>
 			<td class="genericTableData">
 						<%=OcanForm.renderAsTextArea(ocanStaffForm.getId(),"sprituality",5,50,prepopulationLevel)%>
 			</td>
 		</tr>
 		<tr>
-			<td class="genericTableHeader">Is culture (heritage) an important part of your life?</td>
+			<td class="genericTableHeader">Is culture (heritage) an important part of your life? Please explain.</td>
 			<td class="genericTableData">
 						<%=OcanForm.renderAsTextArea(ocanStaffForm.getId(),"culture_heritage",5,50,prepopulationLevel)%>
 			</td>

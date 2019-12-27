@@ -77,6 +77,7 @@ import ca.ehealthontario.ccim.ClientNameDocument2.ClientName;
 import ca.ehealthontario.ccim.ClientNeedToGetThereDocument.ClientNeedToGetThere;
 import ca.ehealthontario.ccim.ClientPhoneDocument.ClientPhone;
 import ca.ehealthontario.ccim.ClientSpiritualityImportanceDocument.ClientSpiritualityImportance;
+import ca.ehealthontario.ccim.ClientStrengthsDocument.ClientStrengths;
 import ca.ehealthontario.ccim.CommunityTreatOrderDocument.CommunityTreatOrder;
 import ca.ehealthontario.ccim.CompletedByOCANLeadDocument.CompletedByOCANLead;
 import ca.ehealthontario.ccim.ConsentDirectiveDocument.ConsentDirective;
@@ -324,11 +325,11 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 	}
 
 	public static int sendSubmissionToIAR(OCANSubmissionFileDocument submissionDoc, String ocanType) {
-		return prepareSubmissionToIAR(submissionDoc, false, null, ocanType) ;
+		return prepareSubmissionToIAR(submissionDoc, true, null, ocanType) ;
 	}
 	
 	public static int sendSubmissionToIAR(OCANSubmissionFileDocument submissionDoc) {
-		return prepareSubmissionToIAR(submissionDoc, false, null) ;
+		return prepareSubmissionToIAR(submissionDoc, true, null) ;
 	}
 	
 	public static int prepareSubmissionToIAR(OCANSubmissionFileDocument submissionDoc, boolean autoSubmit, OutputStream out ) {
@@ -1317,6 +1318,7 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 			//additionalElements.setClientViewMentalHealth(convertClientViewMentalHealth(ocanStaffForm,ocanStaffFormData, ocanType));
 			additionalElements.setClientSpiritualityImportance(convertClientSpiritualityImportance(ocanStaffForm,ocanStaffFormData, ocanType));
 			additionalElements.setClientCultureHeritageImportance(convertClientCultureHeritageImportance(ocanStaffForm,ocanStaffFormData, ocanType));
+			additionalElements.setClientStrengths(convertClientStrengthSkills(ocanStaffForm, ocanStaffFormData, ocanType));
 		}
 
 		PresentingIssueList presentingIssueList = getPresentingIssueList(ocanStaffFormData);
@@ -1377,6 +1379,7 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 			//additionalElements.setClientViewMentalHealth(convertClientViewMentalHealth(ocanStaffForm,ocanStaffFormData, ocanType));
 			additionalElements.setClientSpiritualityImportance(convertClientSpiritualityImportance(ocanStaffForm,ocanStaffFormData, ocanType));
 			additionalElements.setClientCultureHeritageImportance(convertClientCultureHeritageImportance(ocanStaffForm,ocanStaffFormData, ocanType));
+			additionalElements.setClientStrengths(convertClientStrengthSkills(ocanStaffForm, ocanStaffFormData, ocanType));
 		}
 
 		PresentingIssueList presentingIssueList = getPresentingIssueList(ocanStaffFormData);
@@ -1423,6 +1426,16 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 			chff.setStaff(getStaffAnswer("hopes_future",ocanStaffFormData));
 
 		chff.setClient(getStaffAnswer("client_hopes_future",ocanStaffFormData));
+		return chff;
+	}
+	
+	public static ClientStrengths convertClientStrengthSkills(OcanStaffForm ocanStaffForm,List<OcanStaffFormData> ocanStaffFormData, String ocanType) {
+		ClientStrengths chff = ClientStrengths.Factory.newInstance();
+
+		if("FULL".equals(ocanType))
+			chff.setStaff(getStaffAnswer("strength_skills",ocanStaffFormData));
+
+		chff.setClient(getStaffAnswer("client_strength_skills",ocanStaffFormData));
 		return chff;
 	}
 	

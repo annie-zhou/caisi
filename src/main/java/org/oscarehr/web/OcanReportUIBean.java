@@ -628,7 +628,7 @@ public class OcanReportUIBean implements CallbackHandler {
 	}
 	
 	public static int sendSubmissionToIAR(OCANv2SubmissionFileDocument submissionDoc, String ocanType) {
-		return prepareSubmissionToIAR(submissionDoc, false, null, ocanType) ;
+		return prepareSubmissionToIAR(submissionDoc, true, null, ocanType) ;
 	}		
 
 	public static void writeExportIar(OutputStream out) {

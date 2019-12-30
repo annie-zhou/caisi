@@ -35,6 +35,8 @@ import org.oscarehr.common.model.OcanStaffFormData;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
 
+import oscar.OscarProperties;
+
 public class OcanFormAction {
 	
 	private static OcanStaffFormDao ocanStaffFormDao = (OcanStaffFormDao) SpringUtils.getBean("ocanStaffFormDao");
@@ -43,6 +45,14 @@ public class OcanFormAction {
 	private static OcanClientFormDao ocanClientFormDao = (OcanClientFormDao) SpringUtils.getBean("ocanClientFormDao");
 	private static OcanClientFormDataDao ocanClientFormDataDao = (OcanClientFormDataDao) SpringUtils.getBean("ocanClientFormDataDao");
 
+	private static String ocanFormVersion = "1.2";
+	static
+	{
+		if(OscarProperties.getInstance().getProperty("ocan.version", "").trim().length()>0)
+		{
+			ocanFormVersion = OscarProperties.getInstance().getProperty("ocan.version", "").trim();
+		}
+	}
 	
 	public static OcanStaffForm createOcanStaffForm(Integer admissionId, Integer clientId, boolean signed)
 	{
@@ -50,7 +60,7 @@ public class OcanFormAction {
 		
 		OcanStaffForm ocanStaffForm=new OcanStaffForm();
 		ocanStaffForm.setAdmissionId(admissionId);
-		ocanStaffForm.setOcanFormVersion("1.2");		
+		ocanStaffForm.setOcanFormVersion(ocanFormVersion);		
 		ocanStaffForm.setClientId(clientId);
 		ocanStaffForm.setFacilityId(loggedInInfo.currentFacility.getId());
 		ocanStaffForm.setProviderNo(loggedInInfo.loggedInProvider.getProviderNo());
@@ -68,7 +78,7 @@ public class OcanFormAction {
 			
 			//ocanStaffForm.setAdmissionId(admissionId);
 			ocanStaffForm.setAssessmentId(ocanStaffForm.getId());
-			ocanStaffForm.setOcanFormVersion("1.2");		
+			ocanStaffForm.setOcanFormVersion(ocanFormVersion);		
 			ocanStaffForm.setClientId(clientId);
 			ocanStaffForm.setFacilityId(loggedInInfo.currentFacility.getId());			
 			ocanStaffForm.setSigned(signed);
@@ -150,7 +160,7 @@ public class OcanFormAction {
 		LoggedInInfo loggedInInfo=LoggedInInfo.loggedInInfo.get();
 		
 		OcanClientForm ocanClientForm=new OcanClientForm();		
-		ocanClientForm.setOcanFormVersion("1.2");		
+		ocanClientForm.setOcanFormVersion(ocanFormVersion);		
 		ocanClientForm.setClientId(clientId);
 		ocanClientForm.setFacilityId(loggedInInfo.currentFacility.getId());
 		ocanClientForm.setProviderNo(loggedInInfo.loggedInProvider.getProviderNo());

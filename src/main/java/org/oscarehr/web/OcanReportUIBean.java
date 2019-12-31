@@ -361,7 +361,7 @@ public class OcanReportUIBean implements CallbackHandler {
 			file.createNewFile();
 		
 		jaxbMarshaller.marshal(obj, file);
-		System.out.println("file has been written: "+file.getAbsolutePath());
+		logger.info("file has been written: "+file.getAbsolutePath());
 	}
 	
 	public static void writeFile(String fileData, String filename, String ocanVersion, String ocanType)
@@ -376,9 +376,9 @@ public class OcanReportUIBean implements CallbackHandler {
 			fileWriter.flush();
 			fileWriter.close();
 			
-			System.out.println("file has been written: "+file.getAbsolutePath());
+			logger.info("file has been written: "+file.getAbsolutePath());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error in writeFile.. "+e.getMessage(), e);
 		}
 	}
 	

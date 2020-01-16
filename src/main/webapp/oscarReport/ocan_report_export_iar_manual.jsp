@@ -37,4 +37,9 @@
 	OcanReportUIBean.writeExportIar(response.getOutputStream());
 	
 	response.getOutputStream().flush();
+	
+	try{ 
+		out.clear();
+		out = pageContext.pushBody();
+	}catch(Exception ex){ }
 %>

@@ -231,7 +231,6 @@ public class OcanReportUIBean implements CallbackHandler {
 
 	private static OcanSubmissionLogDao logDao = (OcanSubmissionLogDao)SpringUtils.getBean("ocanSubmissionLogDao");
 
-
 	public static List<OcanStaffForm> getAllUnsubmittedOcanForms() {
 		LoggedInInfo loggedInInfo = LoggedInInfo.loggedInInfo.get();
 		//get all completed ones
@@ -414,8 +413,11 @@ public class OcanReportUIBean implements CallbackHandler {
 		}
 
 		//generate the envelope
+		String iarSubmissionVersion = "2.0";
+		String consentVersion = "1.0";
+		
 		IARSubmission is = new IARSubmission();
-		is.setVersion("2.0");
+		is.setVersion(iarSubmissionVersion);
 
 		Application application = new Application();
 		application.setId("1");
@@ -458,7 +460,7 @@ public class OcanReportUIBean implements CallbackHandler {
 		r.setVersion("2.0.6");
 
 		Record consent = new Record();
-		consent.setVersion("1.0");
+		consent.setVersion(consentVersion);
 		consent.setMimeType("text/xml");
 		consent.setRecordType("Consent");
 		ConsentSubmission cs = ConsentSubmission.Factory.newInstance();

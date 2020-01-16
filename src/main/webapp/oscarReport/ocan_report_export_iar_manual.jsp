@@ -22,6 +22,8 @@
     Toronto, Ontario, Canada
 
 --%>
+<%@page import="org.oscarehr.web.OcanReportUIBeanV3"%>
+<%@page import="oscar.OscarProperties"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="org.oscarehr.util.WebUtils"%>
 <%@page import="java.io.PrintWriter"%>
@@ -29,12 +31,24 @@
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="org.oscarehr.web.OcanReportUIBean"%>
 <%@page contentType="application/octet-stream"%>
-<%	
+<%
+	int ocanVersion = 0;
+    		
+	if(OscarProperties.getInstance().getProperty("ocan.version", "").trim().length()>0)
+	{
+		String ocanVersionStr = OscarProperties.getInstance().getProperty("ocan.version", "").trim();
+		
+		ocanVersion = Double.valueOf(ocanVersionStr).intValue();
+		System.out.println("ocanVersion: "+ocanVersion);
+	}
+
 	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 	response.setHeader("Content-Disposition", "attachment; filename=OCAN-IAR-"+formatter.format(new java.util.Date())  + ".xml");
 	
-
-	OcanReportUIBean.writeExportIar(response.getOutputStream());
+	if(ocanVersion==3)
+		OcanReportUIBeanV3.writeExportIar(response.getOutputStream());
+	else
+		OcanReportUIBean.writeExportIar(response.getOutputStream());
 	
 	response.getOutputStream().flush();
 	

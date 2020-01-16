@@ -67,6 +67,7 @@ import org.oscarehr.common.model.OcanClientForm;
 import org.oscarehr.common.model.OcanClientFormData;
 import org.oscarehr.common.model.OcanStaffForm;
 import org.oscarehr.common.model.OcanStaffFormData;
+import org.oscarehr.ocan.OCANv2SubmissionFileDocument;
 import org.oscarehr.util.CxfClientUtils;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
@@ -212,6 +213,19 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 
 	private static OcanSubmissionLogDao logDao = (OcanSubmissionLogDao)SpringUtils.getBean("ocanSubmissionLogDao");
 	
+	private static String ocanVersionStr = "";
+	private static int ocanVersion = 0;
+	
+	static
+	{
+		if(OscarProperties.getInstance().getProperty("ocan.version", "").trim().length()>0)
+		{
+			ocanVersionStr = OscarProperties.getInstance().getProperty("ocan.version", "").trim();
+			
+			ocanVersion = Double.valueOf(ocanVersionStr).intValue();
+		}
+	}
+	
 	public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
         WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
         // set the password for our message - need a better way to do this.
@@ -259,9 +273,9 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		boolean flg = false;
 		
 		if(list==null || list.size()==0)
-			flg = false;
-		else 
 			flg = true;
+		else 
+			flg = false;
 		
 		return flg;
 	}
@@ -295,6 +309,22 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		
 		return size;
 	}
+	
+	public static void writeExportIar(OutputStream out) {
+
+		writeExportIar_forOneOcanType(out, "FULL");
+
+		writeExportIar_forOneOcanType(out, "SELF");
+
+		writeExportIar_forOneOcanType(out, "CORE");
+	}
+	
+	public static void writeExportIar_forOneOcanType(OutputStream out, String ocanType) {
+
+		OCANSubmissionFileDocument submissionDoc = generateOCANSubmission(ocanType);
+		prepareSubmissionToIAR(submissionDoc, false, out );
+					
+	}	
 	
 	public static OCANSubmissionFileDocument generateOCANSubmission(String ocanType) {
 		int increment = 1;
@@ -365,6 +395,7 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 			logger.info("No records to send");
 			return 0;
 		}
+		
 		if( (getLength(submissionDoc.getOCANSubmissionFile().getOCANCoreSubmissionRecordArray()) > 500)  || (getLength(submissionDoc.getOCANSubmissionFile().getOCANFullSubmissionRecordArray()) > 500)
 				|| (getLength(submissionDoc.getOCANSubmissionFile().getOCANSelfSubmissionRecordArray()) > 500)) {
 			logger.warn("over 500 to send..will probably fail");
@@ -388,9 +419,13 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 			return 0;
 		}
 
+		String iarSubmissionVersion = "2.0.2";
+		String consentVersion = "1.0.3";
+		String recordVersion = "3.0";
+		
 		//generate the envelope
 		IARSubmission is = new IARSubmission();
-		is.setVersion("3.0");
+		is.setVersion(iarSubmissionVersion);
 
 		Application application = new Application();
 		application.setId("1");
@@ -430,10 +465,10 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		r.setRecordType("Assessment");
 		r.setMimeType("text/xml");
 		r.setText(t);
-		r.setVersion("2.0.6");
+		r.setVersion(recordVersion);
 
 		Record consent = new Record();
-		consent.setVersion("1.0");
+		consent.setVersion(consentVersion);
 		consent.setMimeType("text/xml");
 		consent.setRecordType("Consent");
 		ConsentSubmission cs = ConsentSubmission.Factory.newInstance();

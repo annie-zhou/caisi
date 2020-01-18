@@ -39,7 +39,6 @@
 		String ocanVersionStr = OscarProperties.getInstance().getProperty("ocan.version", "").trim();
 		
 		ocanVersion = Double.valueOf(ocanVersionStr).intValue();
-		System.out.println("ocanVersion: "+ocanVersion);
 	}
 
 	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -51,6 +50,8 @@
 		OcanReportUIBean.writeExportIar(response.getOutputStream());
 	
 	response.getOutputStream().flush();
+	
+	//OcanReportUIBeanV3.writeOcanSubmissionFile("CORE");
 	
 	try{ 
 		out.clear();

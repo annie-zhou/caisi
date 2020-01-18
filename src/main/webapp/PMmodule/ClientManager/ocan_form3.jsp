@@ -1943,7 +1943,7 @@ Client date of birth : <%=ocanStaffForm.getClientDateOfBirth()%>
 		<tr>
 			<td class="genericTableHeader">If your mother tongue is neither French nor English, which of Canada's official languages are you most comfortable?</td>
 			<td class="genericTableData">
-				<select name="language_comfortable">
+				<select name="language_comfortable" class="{validate: {required:true}}">
 					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "language_comfortable", OcanForm.getOcanFormOptions(ocanVersionStr, "Language_Comfort"),prepopulationLevel)%>
 				</select>					
 			</td>
@@ -2072,10 +2072,10 @@ Client date of birth : <%=ocanStaffForm.getClientDateOfBirth()%>
 		<tr>
 			<td class="genericTableHeader">Do you receive any support? (Select One)</td>
 			<td class="genericTableData">
-				<select name="1_any_support" id="1_any_support" class="{validate: {required:true}}">
+				<select name="1_any_support" class="{validate: {required:true}}">
 					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "1_any_support", OcanForm.getOcanFormOptions(ocanVersionStr, "Residential Support"),prepopulationLevel)%>
 				</select>	
-				<input type="hidden" name="1_any_support_hidden" id="1_any_support_hidden" value="" />			
+				<!-- <input type="hidden" name="1_any_support_hidden" id="1_any_support_hidden" value="" /> -->			
 			</td>
 		</tr>
 		
@@ -4140,7 +4140,7 @@ This information is collected from a variety of sources, including self-report, 
 	<% if(!"FULL".equals(ocanType)) { %>
 	  
 		<tr>
-			<td class="genericTableHeader">Comments</td>
+			<td class="genericTableHeader">General Comments</td>
 			<td class="genericTableData">
 						<%=OcanForm.renderAsTextArea(ocanStaffForm.getId(),"commments",5,50,prepopulationLevel)%>
 			</td>

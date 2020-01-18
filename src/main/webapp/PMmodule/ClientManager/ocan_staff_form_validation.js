@@ -3253,7 +3253,31 @@ function submitOcanForm() {
 		}
 	}	
 	
+	var liCount=0;
+	$("input[name='legal_issues']").each(function(){	
+		if($(this).attr('checked')==true) {
+			liCount++;
+		}
+	});	
 	
+	if(liCount==0) {
+		alert('You must choose atleast 1 legal issue');
+		$("input[name='legal_issues']").focus();
+		return false;
+	}
+	
+	var lsCount=0;
+	$("input[name='legal_status']").each(function(){	
+		if($(this).attr('checked')==true) {
+			lsCount++;
+		}
+	});	
+	
+	if(lsCount==0) {
+		alert('You must choose atleast 1 legal status');
+		$("input[name='legal_status']").focus();
+		return false;
+	}
 	
 	var ppCount=0;
 	$("input[name='presenting_issues']").each(function(){	
@@ -3268,6 +3292,11 @@ function submitOcanForm() {
 		return false;
 	}
 	
+	if($("#commments").val().length == 0) {
+		alert('You must enter generaral comments.');
+		$("input[name='commments']").focus();
+		return false;
+	}
 	
 	if($("#assessment_status").val() == 'Completed') {
 		var r = confirm("Are you sure you have completed this assessment?");

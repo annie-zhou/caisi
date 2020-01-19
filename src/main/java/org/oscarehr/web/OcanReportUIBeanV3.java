@@ -544,68 +544,103 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		ConsentSubmission cs = ConsentSubmission.Factory.newInstance();
 		//cs.getDomNode().getAttributes().
 		OCANCoreSubmissionRecord[] submissionRecords = submissionDoc.getOCANSubmissionFile().getOCANCoreSubmissionRecordArray();
-		for(OCANCoreSubmissionRecord submissionRecord:submissionRecords) {
+		
+		if(!isEmpty(submissionRecords))
+		{
+			for(OCANCoreSubmissionRecord submissionRecord:submissionRecords) 
+			{
+				String assessmentId = submissionRecord.getAssessmentID();
+				String orgClientId = submissionRecord.getClientRecord().getClientID().getOrgClientID();
+				String appId = application.getId();
+				
+				addConsentDirective(cs, assessmentId, appId, orgId, orgClientId);
 
-			String assessmentId = submissionRecord.getAssessmentID();
+				/*String assessmentId_noPrefix = assessmentId;
+				String idPrefix = OscarProperties.getInstance().getProperty("ocan.iar.idPrefix");
+				if(!StringUtils.isBlank(idPrefix)) {
+					assessmentId_noPrefix = assessmentId.replace(idPrefix,"");
+				}
+				
+				OcanStaffForm staffForm = ocanStaffFormDao.findLatestByAssessmentId(LoggedInInfo.loggedInInfo.get().currentFacility.getId(),Integer.parseInt(assessmentId_noPrefix));
+				//addConsentDirective(ConsentSubmisison cs, String assessmentId, Application application, String orgId, OcanStaff)
+				ConsentDirective cd = cs.addNewConsentDirective();
+				cd.setId(assessmentId);
+				cd.setType(CdConsentDirectiveType.ASSESSMENT);
 
-			String assessmentId_noPrefix = assessmentId;
-			String idPrefix = OscarProperties.getInstance().getProperty("ocan.iar.idPrefix");
-			if(!StringUtils.isBlank(idPrefix)) {
-				assessmentId_noPrefix = assessmentId.replace(idPrefix,"");
+				PersonIdentification pi = PersonIdentification.Factory.newInstance();
+				SourceSystem ss = pi.addNewSourceSystem();
+				ss.setId(application.getId());
+				ss.setType(SourceSystem.Type.APPLICATION_ID);
+				PersonIdentificationDocument.PersonIdentification.Organization o = pi.addNewOrganization();
+				o.setId(orgId);
+				o.setName(LoggedInInfo.loggedInInfo.get().currentFacility.getName());
+				pi.setPersonId(submissionRecord.getClientRecord().getClientID().getOrgClientID());
+				cd.setPersonIdentification(pi);
+
+				ApplyTo at = ApplyTo.Factory.newInstance();
+				ApplyToDocument.ApplyTo.Assessment a = at.addNewAssessment();
+				a.setAssessmentId(assessmentId);
+				a.setAssessmentType(AssessmentType.OCAN);
+				at.setAssessment(a);
+				cd.setApplyTo(at);
+
+				CdConsentActionType actionType = CdConsentActionType.Factory.newInstance();
+				String c = staffForm.getConsent();
+				if(c.equals("GRANT")) {
+					actionType.setAccessLevel(CdConsentActionType.AccessLevel.GRANT);
+				}
+				else if(c.equals("DENY")) {
+					actionType.setAccessLevel(CdConsentActionType.AccessLevel.DENY);
+				}
+				else if(c.equals("NOT_SPECIFIED")) {
+					actionType.setAccessLevel(CdConsentActionType.AccessLevel.UNSUPPORTED);
+				} else {
+					actionType.setAccessLevel(CdConsentActionType.AccessLevel.GRANT);
+				}
+				cd.setDirective(actionType);
+
+				RecordedByInfo rbi = RecordedByInfo.Factory.newInstance();
+				rbi.setNameOrUserID(staffForm.getProviderName());
+				Calendar cal2 = Calendar.getInstance();
+				cal2.setTime(staffForm.getCreated());
+				rbi.setTimeRecorded(cal2);
+				cd.setRecordedByInfo(rbi);*/
+
 			}
-			
-			OcanStaffForm staffForm = ocanStaffFormDao.findLatestByAssessmentId(LoggedInInfo.loggedInInfo.get().currentFacility.getId(),Integer.parseInt(assessmentId_noPrefix));
-			//addConsentDirective(ConsentSubmisison cs, String assessmentId, Application application, String orgId, OcanStaff)
-			ConsentDirective cd = cs.addNewConsentDirective();
-			cd.setId(assessmentId);
-			cd.setType(CdConsentDirectiveType.ASSESSMENT);
+		}
+		
+		OCANFullSubmissionRecord[] fullSubmissionRecords = submissionDoc.getOCANSubmissionFile().getOCANFullSubmissionRecordArray();
+		if(!isEmpty(fullSubmissionRecords))
+		{
+			for(OCANFullSubmissionRecord submissionRecord:fullSubmissionRecords)
+			{
 
-			PersonIdentification pi = PersonIdentification.Factory.newInstance();
-			SourceSystem ss = pi.addNewSourceSystem();
-			ss.setId(application.getId());
-			ss.setType(SourceSystem.Type.APPLICATION_ID);
-			PersonIdentificationDocument.PersonIdentification.Organization o = pi.addNewOrganization();
-			o.setId(orgId);
-			o.setName(LoggedInInfo.loggedInInfo.get().currentFacility.getName());
-			pi.setPersonId(submissionRecord.getClientRecord().getClientID().getOrgClientID());
-			cd.setPersonIdentification(pi);
-
-			ApplyTo at = ApplyTo.Factory.newInstance();
-			ApplyToDocument.ApplyTo.Assessment a = at.addNewAssessment();
-			a.setAssessmentId(assessmentId);
-			a.setAssessmentType(AssessmentType.OCAN);
-			at.setAssessment(a);
-			cd.setApplyTo(at);
-
-			CdConsentActionType actionType = CdConsentActionType.Factory.newInstance();
-			String c = staffForm.getConsent();
-			if(c.equals("GRANT")) {
-				actionType.setAccessLevel(CdConsentActionType.AccessLevel.GRANT);
-			}
-			else if(c.equals("DENY")) {
-				actionType.setAccessLevel(CdConsentActionType.AccessLevel.DENY);
-			}
-			else if(c.equals("NOT_SPECIFIED")) {
-				actionType.setAccessLevel(CdConsentActionType.AccessLevel.UNSUPPORTED);
-			} else {
-				actionType.setAccessLevel(CdConsentActionType.AccessLevel.GRANT);
-			}
-			cd.setDirective(actionType);
-
-			RecordedByInfo rbi = RecordedByInfo.Factory.newInstance();
-			rbi.setNameOrUserID(staffForm.getProviderName());
-			Calendar cal2 = Calendar.getInstance();
-			cal2.setTime(staffForm.getCreated());
-			rbi.setTimeRecorded(cal2);
-			cd.setRecordedByInfo(rbi);
-
+				String assessmentId = submissionRecord.getAssessmentID();
+				String orgClientId = submissionRecord.getClientRecord().getClientID().getOrgClientID();
+				String appId = application.getId();
+				
+				addConsentDirective(cs, assessmentId, appId, orgId, orgClientId);
+			}			
+		}
+		
+		OCANSelfSubmissionRecord[] selfSubmissionRecords = submissionDoc.getOCANSubmissionFile().getOCANSelfSubmissionRecordArray();
+		if(!isEmpty(selfSubmissionRecords))
+		{
+			for(OCANSelfSubmissionRecord submissionRecord:selfSubmissionRecords)
+			{
+				String assessmentId = submissionRecord.getAssessmentID();
+				String orgClientId = submissionRecord.getClientRecord().getClientID().getOrgClientID();
+				String appId = application.getId();
+				
+				addConsentDirective(cs, assessmentId, appId, orgId, orgClientId);
+			}			
 		}
 
 		Text t2 = new Text();
 		String cs1 = cs.toString().replace("<xml-fragment xmlns:ccim=\"http://www.ehealthontario.ca/CCIM\">", "");
 		String cs2 = cs1.replace("</xml-fragment>", "");
 	        String cs3 = cs2.replaceAll("ccim:","");
-		t2.setValue("<ConsentSubmission xsi:schemaLocation=\"http://www.ehealthontario.ca/CCIMConsentSubmission-1.0.xsd\" xmlns=\"http://www.ehealthontario.ca/CCIM\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + cs3 + "</ConsentSubmission>");
+		t2.setValue("<ConsentSubmission xsi:schemaLocation=\"http://www.ehealthontario.ca/CCIM\" xmlns=\"http://www.ehealthontario.ca/CCIM\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + cs3 + "</ConsentSubmission>");
 		consent.setText(t2);
 
 		SubmissionContent sc = new SubmissionContent();
@@ -698,6 +733,59 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		}
 
 		return log.getId();
+	}
+	
+	private static void addConsentDirective(ConsentSubmission cs, String assessmentId, String appId, String orgId, String orgClientId)
+	{
+		String assessmentId_noPrefix = assessmentId;
+		String idPrefix = OscarProperties.getInstance().getProperty("ocan.iar.idPrefix");
+		if(!StringUtils.isBlank(idPrefix)) {
+			assessmentId_noPrefix = assessmentId.replace(idPrefix,"");
+		}
+		
+		OcanStaffForm staffForm = ocanStaffFormDao.findLatestByAssessmentId(LoggedInInfo.loggedInInfo.get().currentFacility.getId(),Integer.parseInt(assessmentId_noPrefix));
+		ConsentDirective cd = cs.addNewConsentDirective();
+		cd.setId(assessmentId);
+		cd.setType(CdConsentDirectiveType.ASSESSMENT);
+
+		PersonIdentification pi = PersonIdentification.Factory.newInstance();
+		SourceSystem ss = pi.addNewSourceSystem();
+		ss.setId(appId);
+		ss.setType(SourceSystem.Type.APPLICATION_ID);
+		PersonIdentificationDocument.PersonIdentification.Organization o = pi.addNewOrganization();
+		o.setId(orgId);
+		o.setName(LoggedInInfo.loggedInInfo.get().currentFacility.getName());
+		pi.setPersonId(orgClientId);
+		cd.setPersonIdentification(pi);
+
+		ApplyTo at = ApplyTo.Factory.newInstance();
+		ApplyToDocument.ApplyTo.Assessment a = at.addNewAssessment();
+		a.setAssessmentId(assessmentId);
+		a.setAssessmentType(AssessmentType.OCAN);
+		at.setAssessment(a);
+		cd.setApplyTo(at);
+
+		CdConsentActionType actionType = CdConsentActionType.Factory.newInstance();
+		String c = staffForm.getConsent();
+		if(c.equals("GRANT")) {
+			actionType.setAccessLevel(CdConsentActionType.AccessLevel.GRANT);
+		}
+		else if(c.equals("DENY")) {
+			actionType.setAccessLevel(CdConsentActionType.AccessLevel.DENY);
+		}
+		else if(c.equals("NOT_SPECIFIED")) {
+			actionType.setAccessLevel(CdConsentActionType.AccessLevel.UNSUPPORTED);
+		} else {
+			actionType.setAccessLevel(CdConsentActionType.AccessLevel.GRANT);
+		}
+		cd.setDirective(actionType);
+
+		RecordedByInfo rbi = RecordedByInfo.Factory.newInstance();
+		rbi.setNameOrUserID(staffForm.getProviderName());
+		Calendar cal2 = Calendar.getInstance();
+		cal2.setTime(staffForm.getCreated());
+		rbi.setTimeRecorded(cal2);
+		cd.setRecordedByInfo(rbi);
 	}
 	
 	public static OCANCoreSubmissionRecord convertOcanForm_core(OcanStaffForm ocanStaffForm, List<OcanStaffFormData> ocanStaffFormData, OcanClientForm ocanClientForm, List<OcanClientFormData> ocanClientFormData, String ocanType) {
@@ -1314,13 +1402,13 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		String firstName = demographic.getFirstName();
 		String middleName = "";
 		String lastName = demographic.getLastName();
-		String preferredName = demographic.getDisplayName();
+		String preferredName = "";
 		
 		if(demographic!=null)
 		{
 			firstName = demographic.getFirstName();
 			lastName = demographic.getLastName();
-			preferredName = demographic.getDisplayName();
+			preferredName = "";
 		}
 		
 		if(firstName.isEmpty() && !isEmpty(ocanStaffForm.getFirstName()))

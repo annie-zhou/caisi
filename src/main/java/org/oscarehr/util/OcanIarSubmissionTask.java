@@ -29,6 +29,9 @@ import org.apache.log4j.Logger;
 import org.oscarehr.common.dao.FacilityDao;
 import org.oscarehr.common.model.Facility;
 import org.oscarehr.web.OcanReportUIBean;
+import org.oscarehr.web.OcanReportUIBeanV3;
+
+import oscar.OscarProperties;
 
 public class OcanIarSubmissionTask extends TimerTask {
 
@@ -49,13 +52,36 @@ public class OcanIarSubmissionTask extends TimerTask {
 				}
 			}
 
-			int submissionId_full = OcanReportUIBean.sendSubmissionToIAR(OcanReportUIBean.generateOCANSubmission("FULL"));
+			String ocanVersionStr = "";
+			int ocanVersion = 0;
+			if(OscarProperties.getInstance().getProperty("ocan.version", "").trim().length()>0)
+			{
+				ocanVersionStr = OscarProperties.getInstance().getProperty("ocan.version", "").trim();
+				ocanVersion = Double.valueOf(ocanVersionStr).intValue();
+			}
+			
+			int submissionId_full = 0;
+			if(ocanVersion==3)
+				submissionId_full = OcanReportUIBeanV3.sendSubmissionToIAR(OcanReportUIBeanV3.generateOCANSubmission("FULL"), "FULL");
+			else
+				submissionId_full = OcanReportUIBean.sendSubmissionToIAR(OcanReportUIBean.generateOCANSubmission("FULL"));
+			
 			logger.info("FULL OCAN upload Completed: submissionId=" + submissionId_full);
 
-			int submissionId_self = OcanReportUIBean.sendSubmissionToIAR(OcanReportUIBean.generateOCANSubmission("SELF"));
+			int submissionId_self = 0;
+			if(ocanVersion==3)
+				submissionId_self = OcanReportUIBeanV3.sendSubmissionToIAR(OcanReportUIBeanV3.generateOCANSubmission("SELF"));
+			else
+				submissionId_self = OcanReportUIBean.sendSubmissionToIAR(OcanReportUIBean.generateOCANSubmission("SELF"));
+			
 			logger.info("SELF OCAN upload Completed: submissionId=" + submissionId_self);
 
-			int submissionId_core = OcanReportUIBean.sendSubmissionToIAR(OcanReportUIBean.generateOCANSubmission("CORE"));
+			int submissionId_core = 0;
+			if(ocanVersion==3)
+				submissionId_core = OcanReportUIBeanV3.sendSubmissionToIAR(OcanReportUIBeanV3.generateOCANSubmission("CORE"));			
+			else
+				submissionId_core = OcanReportUIBean.sendSubmissionToIAR(OcanReportUIBean.generateOCANSubmission("CORE"));
+			
 			logger.info("CORE OCAN upload Completed: submissionId=" + submissionId_core);
 		} catch (Exception e) {
 			logger.error("Error", e);

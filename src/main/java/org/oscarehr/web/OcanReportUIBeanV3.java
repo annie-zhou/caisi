@@ -529,7 +529,11 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		is.setTransmissionHeader(th);
 
 		Text t = new Text();
-		t.setValue(sos.toString());
+		
+		String submissionFileXmlStr = sos.toString();
+		submissionFileXmlStr = submissionFileXmlStr.replaceAll("xmlns:ccim=\"http://www.ehealthontario.ca/CCIM\"", "xmlns=\"http://www.ehealthontario.ca/CCIM\"");
+		submissionFileXmlStr = submissionFileXmlStr.replaceAll("ccim:", "");
+		t.setValue(submissionFileXmlStr);
 
 		Record r = new Record();
 		r.setRecordType("Assessment");

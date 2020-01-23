@@ -1,3 +1,5 @@
+delete from OcanFormOption where ocanFormVersion = '3.0';
+
 -- Reason for OCAN
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName)
@@ -382,19 +384,19 @@ select max(id)+1 ,"3.0","Residential Support","CDA","Prefer not to answer" FROM 
 -- Living Arrangement Type
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
-select max(id)+1 ,"3.0","Living Arrangement Type","023-01","No-on my own" FROM OcanFormOption;
+select max(id)+1 ,"3.0","Living Arrangement Type","025-01","No-on my own" FROM OcanFormOption;
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
-select max(id)+1 ,"3.0","Living Arrangement Type","023-02","Spouse/Partner" FROM OcanFormOption;
+select max(id)+1 ,"3.0","Living Arrangement Type","025-02","Spouse/Partner" FROM OcanFormOption;
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
-select max(id)+1 ,"3.0","Living Arrangement Type","023-03","Children" FROM OcanFormOption;
+select max(id)+1 ,"3.0","Living Arrangement Type","025-03","Children" FROM OcanFormOption;
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
-select max(id)+1 ,"3.0","Living Arrangement Type","023-04","Parents" FROM OcanFormOption;
+select max(id)+1 ,"3.0","Living Arrangement Type","025-04","Parents" FROM OcanFormOption;
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
-select max(id)+1 ,"3.0","Living Arrangement Type","023-05","Relatives" FROM OcanFormOption;
+select max(id)+1 ,"3.0","Living Arrangement Type","025-05","Relatives" FROM OcanFormOption;
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
 select max(id)+1 ,"3.0","Living Arrangement Type","023-06","Non-relatives" FROM OcanFormOption;

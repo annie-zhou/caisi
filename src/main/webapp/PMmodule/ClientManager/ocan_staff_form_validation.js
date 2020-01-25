@@ -3294,7 +3294,7 @@ function submitOcanForm() {
 	
 	if($("#commments").val().length == 0) {
 		alert('You must enter generaral comments.');
-		$("input[name='commments']").focus();
+		$("#commments").focus();
 		return false;
 	}
 	

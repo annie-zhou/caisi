@@ -718,7 +718,7 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		logDao.merge(log);
 
 		if(log.getResult()!=null && log.getResult().equals("true")) {
-			for(int x=0;x<submissionDoc.getOCANSubmissionFile().getOCANCoreSubmissionRecordArray().length;x++) {
+			/*for(int x=0;x<submissionDoc.getOCANSubmissionFile().getOCANCoreSubmissionRecordArray().length;x++) {
 				OCANCoreSubmissionRecord subRec = submissionDoc.getOCANSubmissionFile().getOCANCoreSubmissionRecordArray()[x];
 				String id = subRec.getAssessmentID();
 				//OcanStaffForm staffForm = ocanStaffFormDao.find(Integer.parseInt(id));
@@ -733,10 +733,43 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 
 				staffForm.setSubmissionId(log.getId());
 				ocanStaffFormDao.merge(staffForm);
+			}*/
+			
+			int submissionId = log.getId();
+			if(submissionDoc.getOCANSubmissionFile()!=null)
+			{
+				updateSubmissionId(submissionDoc.getOCANSubmissionFile().getOCANCoreSubmissionRecordArray(), submissionId);
+				updateSubmissionId(submissionDoc.getOCANSubmissionFile().getOCANFullSubmissionRecordArray(), submissionId);
+				updateSubmissionId(submissionDoc.getOCANSubmissionFile().getOCANSelfSubmissionRecordArray(), submissionId);
 			}
 		}
 
 		return log.getId();
+	}
+	
+	private static void updateSubmissionId(OCANSubmissionRecordType[] submissionRecordTypes, int submissionId)
+	{
+		if(submissionRecordTypes!=null && submissionRecordTypes.length>0)
+		{
+			for(int x=0;x<submissionRecordTypes.length;x++) 
+			{
+				OCANSubmissionRecordType subRec = submissionRecordTypes[x];
+				
+				String id = subRec.getAssessmentID();
+				//OcanStaffForm staffForm = ocanStaffFormDao.find(Integer.parseInt(id));
+				// assessment ID is not form ID.
+				String assessmentId_noPrefix = id;
+				String idPrefix = OscarProperties.getInstance().getProperty("ocan.iar.idPrefix");
+				if(!StringUtils.isBlank(idPrefix)) {
+					assessmentId_noPrefix = id.replace(idPrefix,"");
+				}
+				
+				OcanStaffForm staffForm = ocanStaffFormDao.findLatestByAssessmentId(LoggedInInfo.loggedInInfo.get().currentFacility.getId(), Integer.valueOf(assessmentId_noPrefix));
+
+				staffForm.setSubmissionId(submissionId);
+				ocanStaffFormDao.merge(staffForm);
+			}			
+		}
 	}
 	
 	private static void addConsentDirective(ConsentSubmission cs, String assessmentId, String appId, String orgId, String orgClientId)
@@ -962,6 +995,7 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		//ocanSubmissionRecord.setIARViewingConsent(OCANSubmissionRecordType.IARViewingConsent.Enum.forString("TRUE"));
 
 		ocanSubmissionRecord.setSubmitOrganizationRecord(convertSubmitOrganizationRecord(ocanStaffForm,ocanStaffFormData));
+		ocanSubmissionRecord.setIARClientInfo(getClientType(ocanStaffForm, ocanStaffFormData, ocanType));
 		ocanSubmissionRecord.setClientRecord(convertClientRecord_full(ocanStaffForm,ocanStaffFormData,ocanType));
 		ocanSubmissionRecord.setOCANDomains(convertOCANDomains_full(ocanStaffForm,ocanStaffFormData, ocanClientForm, ocanClientFormData, ocanType));
 		ocanSubmissionRecord.setAdditionalElements(convertAdditionalElements_full(ocanStaffForm,ocanStaffFormData,ocanType));
@@ -1002,6 +1036,7 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		//ocanSubmissionRecord.setIARViewingConsent(OCANSubmissionRecordType.IARViewingConsent.Enum.forString("TRUE"));
 
 		ocanSubmissionRecord.setSubmitOrganizationRecord(convertSubmitOrganizationRecord(ocanStaffForm,ocanStaffFormData));
+		ocanSubmissionRecord.setIARClientInfo(getClientType(ocanStaffForm, ocanStaffFormData, ocanType));
 		ocanSubmissionRecord.setClientRecord(convertClientRecord_self(ocanStaffForm,ocanStaffFormData,ocanType));
 		ocanSubmissionRecord.setOCANDomains(convertOCANDomains_self(ocanStaffForm,ocanStaffFormData, ocanClientForm, ocanClientFormData, ocanType));
 		ocanSubmissionRecord.setAdditionalElements(convertAdditionalElements_self(ocanStaffForm,ocanStaffFormData,ocanType));
@@ -1243,7 +1278,7 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		clientRecord.setGeneralComments(getStaffAnswer("commments",ocanStaffFormData));
 		
 		ca.ehealthontario.ccim.MotherTongueDocument.MotherTongue motherTongue = ca.ehealthontario.ccim.MotherTongueDocument.MotherTongue.Factory.newInstance();
-		motherTongue.setValue(ca.ehealthontario.ccim.OCANLanguageListType.Enum.forString(getStaffAnswer("Language",ocanStaffFormData)));
+		motherTongue.setValue(ca.ehealthontario.ccim.OCANLanguageListType.Enum.forString(getStaffAnswer("mother_tongue",ocanStaffFormData)));
 		clientRecord.setMotherTongue(motherTongue);
 		
 		clientRecord.setPrefOfficialLang(ca.ehealthontario.ccim.PrefOfficialLangDocument.PrefOfficialLang.Enum.forString(getStaffAnswer("language_comfortable",ocanStaffFormData)));
@@ -1340,7 +1375,7 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		clientRecord.setGeneralComments(getStaffAnswer("commments",ocanStaffFormData));
 		
 		ca.ehealthontario.ccim.MotherTongueDocument.MotherTongue motherTongue = ca.ehealthontario.ccim.MotherTongueDocument.MotherTongue.Factory.newInstance();
-		motherTongue.setValue(ca.ehealthontario.ccim.OCANLanguageListType.Enum.forString(getStaffAnswer("Language",ocanStaffFormData)));
+		motherTongue.setValue(ca.ehealthontario.ccim.OCANLanguageListType.Enum.forString(getStaffAnswer("mother_tongue",ocanStaffFormData)));
 		clientRecord.setMotherTongue(motherTongue);
 		
 		clientRecord.setPrefOfficialLang(ca.ehealthontario.ccim.PrefOfficialLangDocument.PrefOfficialLang.Enum.forString(getStaffAnswer("language_comfortable",ocanStaffFormData)));

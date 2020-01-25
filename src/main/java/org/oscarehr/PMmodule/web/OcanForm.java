@@ -701,12 +701,22 @@ public class OcanForm {
 	
 	public static String renderAsTextArea(Integer ocanStaffFormId, String question, int rows, int cols, int prepopulationLevel, boolean clientForm)
 	{
+		return renderAsTextArea(ocanStaffFormId, question, rows, cols, prepopulationLevel, clientForm, false);
+	}
+	
+	public static String renderAsTextArea(Integer ocanStaffFormId, String question, int rows, int cols, int prepopulationLevel, boolean clientForm, boolean mandatory)
+	{
 		List<OcanStaffFormData> existingAnswers= null;
 		List<OcanStaffFormData> existingClientAnswers=null;
 
 		StringBuilder sb=new StringBuilder();
 
-		sb.append("<textarea maxlength=\"512\" name=\""+question+"\" id=\""+question+"\" rows=\"" + rows + "\" cols=\"" + cols + "\">");
+		String mandatoryStr = "";
+		if(mandatory)
+		{
+			mandatoryStr = "class=\"{validate: {required:true}}\"";
+		}
+		sb.append("<textarea maxlength=\"512\" name=\""+question+"\" id=\""+question+"\" rows=\"" + rows + "\" cols=\"" + cols + "\" "+mandatoryStr+"  >");
 
 		if(!clientForm) {
 			existingAnswers=getStaffAnswers(ocanStaffFormId, question, prepopulationLevel);

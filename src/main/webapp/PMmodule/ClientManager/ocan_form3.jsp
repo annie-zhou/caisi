@@ -1975,9 +1975,14 @@ Client date of birth : <%=ocanStaffForm.getClientDateOfBirth()%>
 	<% if("FULL".equals(ocanType)) { %>
 	  
 		<tr>
-			<td class="genericTableHeader">Comments</td>
+			<td class="genericTableHeader">General Comments</td>
 			<td class="genericTableData">
-						<%=OcanForm.renderAsTextArea(ocanStaffForm.getId(),"commments",5,50,prepopulationLevel)%>
+						<%
+							String generalCommentsFull = OcanForm.renderAsTextArea(ocanStaffForm.getId(),"commments",5,50,prepopulationLevel, false, true);
+							//generalCommentsFull = generalCommentsFull.substring(0,generalCommentsFull.length()-2);
+							//generalCommentsFull = generalCommentsFull.concat(" class=\"{validate: {required:true}}\"/>");
+						%>
+						<%=generalCommentsFull %>
 			</td>
 		</tr>
 		
@@ -2075,7 +2080,7 @@ Client date of birth : <%=ocanStaffForm.getClientDateOfBirth()%>
 				<select name="1_any_support" class="{validate: {required:true}}">
 					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "1_any_support", OcanForm.getOcanFormOptions(ocanVersionStr, "Residential Support"),prepopulationLevel)%>
 				</select>	
-				<!-- <input type="hidden" name="1_any_support_hidden" id="1_any_support_hidden" value="" /> -->			
+				<input type="hidden" name="1_any_support_hidden" id="1_any_support_hidden" value="" />			
 			</td>
 		</tr>
 		
@@ -4142,7 +4147,12 @@ This information is collected from a variety of sources, including self-report, 
 		<tr>
 			<td class="genericTableHeader">General Comments</td>
 			<td class="genericTableData">
-						<%=OcanForm.renderAsTextArea(ocanStaffForm.getId(),"commments",5,50,prepopulationLevel)%>
+						<%
+							String generalComments = OcanForm.renderAsTextArea(ocanStaffForm.getId(),"commments",5,50,prepopulationLevel, false, true);
+							//generalComments = generalComments.substring(0,generalComments.length()-2);
+							//generalComments = generalComments.concat(" class=\"{validate: {required:true}}\"/>");
+						%>
+						<%=generalComments %>
 			</td>
 		</tr>
 	

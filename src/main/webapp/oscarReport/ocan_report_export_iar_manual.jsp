@@ -44,14 +44,14 @@
 	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 	response.setHeader("Content-Disposition", "attachment; filename=OCAN-IAR-"+formatter.format(new java.util.Date())  + ".xml");
 	
-	/*if(ocanVersion==3)
+	if(ocanVersion==3)
 		OcanReportUIBeanV3.writeExportIar(response.getOutputStream());
 	else
 		OcanReportUIBean.writeExportIar(response.getOutputStream());
 	
-	response.getOutputStream().flush();*/
+	response.getOutputStream().flush();
 	
-	OcanReportUIBeanV3.writeOcanSubmissionFile("FULL");
+	//OcanReportUIBeanV3.writeOcanSubmissionFile("FULL");
 	
 	try{ 
 		out.clear();

@@ -1113,10 +1113,16 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 
 		ca.ehealthontario.ccim.PrefLangDocument.PrefLang prefLang = ca.ehealthontario.ccim.PrefLangDocument.PrefLang.Factory.newInstance();
 		prefLang.setValue(ca.ehealthontario.ccim.OCANLanguageListType.Enum.forString(getStaffAnswer("preferred_language",ocanStaffFormData)));
+		prefLang.setOther(getStaffAnswer("preferred_language_other",ocanStaffFormData));
 		clientRecord.setPrefLang(prefLang);
 		
 		ca.ehealthontario.ccim.ServiceLangDocument.ServiceLang serviceLang = ca.ehealthontario.ccim.ServiceLangDocument.ServiceLang.Factory.newInstance();
-		serviceLang.setValue(ca.ehealthontario.ccim.OCANLanguageListType.Enum.forString(getStaffAnswer("language_service_provision",ocanStaffFormData)));
+		String serviceLangStr = getStaffAnswer("language_service_provision",ocanStaffFormData);
+		serviceLang.setValue(ca.ehealthontario.ccim.OCANLanguageListType.Enum.forString(serviceLangStr));
+		if(serviceLangStr!=null && serviceLangStr.equalsIgnoreCase("oth"))
+		{
+			serviceLang.setOther(getStaffAnswer("language_service_provision_other",ocanStaffFormData));
+		}
 		clientRecord.setServiceLang(serviceLang);
 			
 		List<String> legalIssuesList = getMultipleStaffAnswer("legal_issues",ocanStaffFormData);
@@ -1245,10 +1251,20 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 
 		ca.ehealthontario.ccim.PrefLangDocument.PrefLang prefLang = ca.ehealthontario.ccim.PrefLangDocument.PrefLang.Factory.newInstance();
 		prefLang.setValue(ca.ehealthontario.ccim.OCANLanguageListType.Enum.forString(getStaffAnswer("preferred_language",ocanStaffFormData)));
+		prefLang.setOther(getStaffAnswer("preferred_language_other",ocanStaffFormData));
 		clientRecord.setPrefLang(prefLang);
 		
-		ca.ehealthontario.ccim.ServiceLangDocument.ServiceLang serviceLang = ca.ehealthontario.ccim.ServiceLangDocument.ServiceLang.Factory.newInstance();
+		/*ca.ehealthontario.ccim.ServiceLangDocument.ServiceLang serviceLang = ca.ehealthontario.ccim.ServiceLangDocument.ServiceLang.Factory.newInstance();
 		serviceLang.setValue(ca.ehealthontario.ccim.OCANLanguageListType.Enum.forString(getStaffAnswer("language_service_provision",ocanStaffFormData)));
+		clientRecord.setServiceLang(serviceLang);*/
+		
+		ca.ehealthontario.ccim.ServiceLangDocument.ServiceLang serviceLang = ca.ehealthontario.ccim.ServiceLangDocument.ServiceLang.Factory.newInstance();
+		String serviceLangStr = getStaffAnswer("language_service_provision",ocanStaffFormData);
+		serviceLang.setValue(ca.ehealthontario.ccim.OCANLanguageListType.Enum.forString(serviceLangStr));
+		if(serviceLangStr!=null && serviceLangStr.equalsIgnoreCase("oth"))
+		{
+			serviceLang.setOther(getStaffAnswer("language_service_provision_other",ocanStaffFormData));
+		}
 		clientRecord.setServiceLang(serviceLang);
 			
 		List<String> legalIssuesList = getMultipleStaffAnswer("legal_issues",ocanStaffFormData);
@@ -1342,10 +1358,20 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 
 		ca.ehealthontario.ccim.PrefLangDocument.PrefLang prefLang = ca.ehealthontario.ccim.PrefLangDocument.PrefLang.Factory.newInstance();
 		prefLang.setValue(ca.ehealthontario.ccim.OCANLanguageListType.Enum.forString(getStaffAnswer("preferred_language",ocanStaffFormData)));
+		prefLang.setOther(getStaffAnswer("preferred_language_other",ocanStaffFormData));
 		clientRecord.setPrefLang(prefLang);
 		
-		ca.ehealthontario.ccim.ServiceLangDocument.ServiceLang serviceLang = ca.ehealthontario.ccim.ServiceLangDocument.ServiceLang.Factory.newInstance();
+		/*ca.ehealthontario.ccim.ServiceLangDocument.ServiceLang serviceLang = ca.ehealthontario.ccim.ServiceLangDocument.ServiceLang.Factory.newInstance();
 		serviceLang.setValue(ca.ehealthontario.ccim.OCANLanguageListType.Enum.forString(getStaffAnswer("language_service_provision",ocanStaffFormData)));
+		clientRecord.setServiceLang(serviceLang);*/
+		
+		ca.ehealthontario.ccim.ServiceLangDocument.ServiceLang serviceLang = ca.ehealthontario.ccim.ServiceLangDocument.ServiceLang.Factory.newInstance();
+		String serviceLangStr = getStaffAnswer("language_service_provision",ocanStaffFormData);
+		serviceLang.setValue(ca.ehealthontario.ccim.OCANLanguageListType.Enum.forString(serviceLangStr));
+		if(serviceLangStr!=null && serviceLangStr.equalsIgnoreCase("oth"))
+		{
+			serviceLang.setOther(getStaffAnswer("language_service_provision_other",ocanStaffFormData));
+		}
 		clientRecord.setServiceLang(serviceLang);
 			
 		List<String> legalIssuesList = getMultipleStaffAnswer("legal_issues",ocanStaffFormData);
@@ -1991,6 +2017,7 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 				ocanDomains.setLivingArrangementList(livingArrangementList);
 			}*/
 			String livingArrangement = getStaffAnswer("1_live_with_anyone",ocanStaffFormData);
+			String livingArrangementOther = getStaffAnswer("1_live_with_anyone_other",ocanStaffFormData);
 			
 			if(!isEmpty(livingArrangement))
 			{
@@ -1999,6 +2026,7 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 				
 				LivingArrangementType livingArrangementType = LivingArrangementType.Factory.newInstance();
 				livingArrangementType.setValue(ca.ehealthontario.ccim.LivingArrangementTypeDocument.LivingArrangementType.Value.Enum.forString(livingArrangement));
+				livingArrangementType.setOther(livingArrangementOther);
 				
 				arrangementTypes.add(livingArrangementType);
 				
@@ -2114,6 +2142,8 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 			domain.setResidenceSupport(ca.ehealthontario.ccim.ResidenceSupportDocument.ResidenceSupport.Enum.forString(getStaffAnswer("1_any_support",ocanStaffFormData)));
 			
 			List<String> livingArrangements = getMultipleStaffAnswer("1_live_with_anyone", ocanStaffFormData);
+			String livingArrangementOther = getStaffAnswer("1_live_with_anyone_other",ocanStaffFormData);
+			
 			if(!isEmpty(livingArrangements))
 			{
 				LivingArrangementList livingArrangementList = LivingArrangementList.Factory.newInstance();
@@ -2122,6 +2152,7 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 				for (String livingArrangement : livingArrangements) {
 					LivingArrangementType livingArrangementType = LivingArrangementType.Factory.newInstance();
 					livingArrangementType.setValue(ca.ehealthontario.ccim.LivingArrangementTypeDocument.LivingArrangementType.Value.Enum.forString(livingArrangement));
+					livingArrangementType.setOther(livingArrangementOther);
 					
 					arrangementTypes.add(livingArrangementType);
 				}
@@ -2289,6 +2320,8 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 			domain.setResidenceSupport(ca.ehealthontario.ccim.ResidenceSupportDocument.ResidenceSupport.Enum.forString(getStaffAnswer("1_any_support",ocanStaffFormData)));
 			
 			List<String> livingArrangements = getMultipleStaffAnswer("1_live_with_anyone", ocanStaffFormData);
+			String livingArrangementOther = getStaffAnswer("1_live_with_anyone_other",ocanStaffFormData);
+			
 			if(!isEmpty(livingArrangements))
 			{
 				LivingArrangementList livingArrangementList = LivingArrangementList.Factory.newInstance();
@@ -2297,6 +2330,7 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 				for (String livingArrangement : livingArrangements) {
 					LivingArrangementType livingArrangementType = LivingArrangementType.Factory.newInstance();
 					livingArrangementType.setValue(ca.ehealthontario.ccim.LivingArrangementTypeDocument.LivingArrangementType.Value.Enum.forString(livingArrangement));
+					livingArrangementType.setOther(livingArrangementOther);
 					
 					arrangementTypes.add(livingArrangementType);
 				}
@@ -2763,13 +2797,19 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 	
 	public static OtherIllnessList getOtherIllnessList(List<OcanStaffFormData> ocanStaffFormData) {
 		OtherIllnessList otherIllnessList = OtherIllnessList.Factory.newInstance();
-		List<String> answers = getMultipleStaffAnswer("other_illness",ocanStaffFormData);
-
+		List<String> answers = getMultipleStaffAnswer("disabilities",ocanStaffFormData);
+		String disabilityOther = getStaffAnswer("disabilities_other", ocanStaffFormData);
+		
 		List<OtherIllness> mc_list = new ArrayList<OtherIllness>();
 		Iterator<String> itr = answers.iterator();
 		while(itr.hasNext()) {
+			String otherIllnessTmp = itr.next();
+			
 			OtherIllness otherIllness = OtherIllness.Factory.newInstance();
-			otherIllness.setValue(OtherIllness.Value.Enum.forString(itr.next()));
+			otherIllness.setValue(OtherIllness.Value.Enum.forString(otherIllnessTmp));
+			
+			if(otherIllnessTmp!=null && otherIllnessTmp.equalsIgnoreCase("OTH"))
+				otherIllness.setOther(disabilityOther);
 			
 			mc_list.add(otherIllness);
 		}

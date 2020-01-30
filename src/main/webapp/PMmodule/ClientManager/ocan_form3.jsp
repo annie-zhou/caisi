@@ -1802,7 +1802,7 @@ Client date of birth : <%=ocanStaffForm.getClientDateOfBirth()%>
 			<%--- <td class="genericTableHeader">What culture do you (Consumer) identify with?</td> --%>
 			<td class="genericTableHeader">Which of the following best describe your racial or ethnic group? (select one)</td>
 			<td class="genericTableData">
-				<select name="culture" class="{validate: {required:true}}>
+				<select name="culture" id="culture" class="{validate: {required:true}}>
 					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "culture", OcanForm.getOcanFormOptions(ocanVersionStr, "Ethniticity"),prepopulationLevel)%>
 				</select>					
 			</td>
@@ -1827,11 +1827,18 @@ Client date of birth : <%=ocanStaffForm.getClientDateOfBirth()%>
 		<tr>
 			<td class="genericTableHeader">What is your Sexual Orientation? (Select One)</td>
 			<td class="genericTableData">
-				<select name="sex_orientation" class="{validate: {required:true}}">
+				<select name="sex_orientation" id="sex_orientation" class="{validate: {required:true}}">
 					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "sex_orientation", OcanForm.getOcanFormOptions(ocanVersionStr, "Sexual Orientation"),prepopulationLevel)%>
 				</select>					
 			</td>
 		</tr>
+		
+		<tr>
+			<td class="genericTableHeader">What is your Sexual Orientation? - Other</td>
+			<td class="genericTableData">
+				<%=OcanForm.renderAsTextField(ocanStaffForm.getId(), "sex_orientation_other", 128,prepopulationLevel)%>						
+			</td>
+		</tr>	
 		
 		<tr>
 			<td class="genericTableHeader">Citizenship Status (select one)</td>
@@ -1916,20 +1923,34 @@ Client date of birth : <%=ocanStaffForm.getClientDateOfBirth()%>
 			<!-- <td class="genericTableHeader">Service recipient preferred language?</td> -->
 			<td class="genericTableHeader">What language would you feel most comfortable speaking in with your health care provider?</td>
 			<td class="genericTableData">
-				<select name="preferred_language" class="{validate: {required:true}}">
+				<select name="preferred_language" id="preferred_language" class="{validate: {required:true}}">
 					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "preferred_language", OcanForm.getOcanFormOptions(ocanVersionStr, "Language"),prepopulationLevel)%>
 				</select>					
 			</td>
 		</tr>
 		
 		<tr>
+			<td class="genericTableHeader">What language would you feel most comfortable speaking in with your health care provider? - Other</td>
+			<td class="genericTableData">
+				<%=OcanForm.renderAsTextField(ocanStaffForm.getId(), "preferred_language_other", 128,prepopulationLevel)%>						
+			</td>
+		</tr>	
+		
+		<tr>
 			<td class="genericTableHeader">Language of Service Provision?</td>
 			<td class="genericTableData">
-				<select name="language_service_provision" class="{validate: {required:true}}">
+				<select name="language_service_provision" id="language_service_provision" class="{validate: {required:true}}">
 					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "language_service_provision", OcanForm.getOcanFormOptions(ocanVersionStr, "Language"),prepopulationLevel)%>
 				</select>					
 			</td>
 		</tr>
+		
+		<tr>
+			<td class="genericTableHeader">Language of Service Provision - Other</td>
+			<td class="genericTableData">
+				<%=OcanForm.renderAsTextField(ocanStaffForm.getId(), "language_service_provision_other", 128,prepopulationLevel)%>						
+			</td>
+		</tr>	
 	 	
 		<tr>
 			<td class="genericTableHeader">What is your mother tongue? (Select One)</td>
@@ -2087,9 +2108,16 @@ Client date of birth : <%=ocanStaffForm.getClientDateOfBirth()%>
 		<tr>
 			<td class="genericTableHeader">Do you live with anyone? (Select all that apply)</td>
 			<td class="genericTableData">
-				<select name="1_live_with_anyone" class="{validate: {required:true}}">
+				<select name="1_live_with_anyone" id="1_live_with_anyone" class="{validate: {required:true}}">
 					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "1_live_with_anyone", OcanForm.getOcanFormOptions(ocanVersionStr, "Living Arrangement Type"),prepopulationLevel)%>
 				</select>					
+			</td>
+		</tr>	
+		
+		<tr>
+			<td class="genericTableHeader">Do you live with anyone - Other</td>
+			<td class="genericTableData">
+				<%=OcanForm.renderAsTextField(ocanStaffForm.getId(), "1_live_with_anyone_other", 128,prepopulationLevel)%>						
 			</td>
 		</tr>	
 					
@@ -2797,7 +2825,12 @@ This information is collected from a variety of sources, including self-report, 
 			</td>
 		</tr>
 		
-		
+		<tr>
+			<td class="genericTableHeader">Disabilities - Other</td>
+			<td class="genericTableData">
+				<%=OcanForm.renderAsTextField(ocanStaffForm.getId(), "disabilities_other", 128,prepopulationLevel)%>						
+			</td>
+		</tr>	
 
 <% if("FULL".equals(ocanType)) { %>
 

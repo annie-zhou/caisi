@@ -29,7 +29,6 @@
 <%@page import="org.oscarehr.PMmodule.web.OcanForm"%>
 <%@page import="org.oscarehr.util.LoggedInInfo"%>
 
-
 <%
 	String ocanVersionStr = "";
 	int ocanVersion = 0;

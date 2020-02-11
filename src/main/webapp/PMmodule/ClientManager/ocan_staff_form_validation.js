@@ -1210,7 +1210,30 @@ $("document").ready(function() {
 		} 
 	});
 	
+	enableDisableTextOnChangeSelect("language_service_provision", "language_service_provision_other", "OTH");
+	$("#language_service_provision").change(function() {
+		enableDisableTextOnChangeSelect("language_service_provision", "language_service_provision_other", "OTH");
+	});
 	
+	enableDisableTextOnChangeSelect("culture", "cultureother", "OTH");
+	$("#culture").change(function() {
+		enableDisableTextOnChangeSelect("culture", "cultureother", "OTH");
+	});
+	
+	enableDisableTextOnChangeSelect("preferred_language", "preferred_language_other", "OTH");
+	$("#preferred_language").change(function() {
+		enableDisableTextOnChangeSelect("preferred_language", "preferred_language_other", "OTH");
+	});
+	
+	enableDisableTextOnChangeSelect("1_live_with_anyone", "1_live_with_anyone_other", "OTH");
+	$("#1_live_with_anyone").change(function() {
+		enableDisableTextOnChangeSelect("1_live_with_anyone", "1_live_with_anyone_other", "OTH");
+	});
+	
+	enableDisableTextOnChangeSelect("sex_orientation", "sex_orientation_other", "OTH");
+	$("#sex_orientation").change(function() {
+		enableDisableTextOnChangeSelect("sex_orientation", "sex_orientation_other", "OTH");
+	});
 	
 	$("#1_where_live").change(function() {
 		//var version = $().jquery;
@@ -2561,7 +2584,7 @@ $("document").ready(function() {
 	
 			
 	$("#reasonForAssessment").change(function() {
-		if($("#reasonForAssessment").val() == 'OTHR') {
+		if($("#reasonForAssessment").val() == 'OTHR' || $("#reasonForAssessment").val() == 'SC') {
 			$("#reason_for_assessment_other").attr('disabled','');
 			$("#reason_for_assessment_other").val("");
 		} else {		
@@ -2593,7 +2616,7 @@ $("document").ready(function() {
 	});
 	
 	$("#reasonForAssessment").each(function() {
-		if($("#reasonForAssessment").val() == 'OTHR') {
+		if($("#reasonForAssessment").val() == 'OTHR' || $("#reasonForAssessment").val() == 'SC') {
 			$("#reason_for_assessment_other").attr('disabled','');			
 		} else {		
 			$("#reason_for_assessment_other").attr('disabled','disabled');
@@ -3253,7 +3276,31 @@ function submitOcanForm() {
 		}
 	}	
 	
+	var liCount=0;
+	$("input[name='legal_issues']").each(function(){	
+		if($(this).attr('checked')==true) {
+			liCount++;
+		}
+	});	
 	
+	if(liCount==0) {
+		alert('You must choose atleast 1 legal issue');
+		$("input[name='legal_issues']").focus();
+		return false;
+	}
+	
+	var lsCount=0;
+	$("input[name='legal_status']").each(function(){	
+		if($(this).attr('checked')==true) {
+			lsCount++;
+		}
+	});	
+	
+	if(lsCount==0) {
+		alert('You must choose atleast 1 legal status');
+		$("input[name='legal_status']").focus();
+		return false;
+	}
 	
 	var ppCount=0;
 	$("input[name='presenting_issues']").each(function(){	
@@ -3268,6 +3315,11 @@ function submitOcanForm() {
 		return false;
 	}
 	
+	if($("#commments").val().length == 0) {
+		alert('You must enter generaral comments.');
+		$("#commments").focus();
+		return false;
+	}
 	
 	if($("#assessment_status").val() == 'Completed') {
 		var r = confirm("Are you sure you have completed this assessment?");
@@ -3324,3 +3376,14 @@ function checkForRequired(elementId) {
 	}
 	return false;
 }
+
+function enableDisableTextOnChangeSelect(selectDropdownId, textboxId, valueToCheck)
+{
+	if($("#"+selectDropdownId).val() == valueToCheck) {
+		$("#"+textboxId).attr("disabled","");
+	}else{
+		$("#"+textboxId).attr("disabled","disabled");
+		$("#"+textboxId).val("");
+	}
+}
+

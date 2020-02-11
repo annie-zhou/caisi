@@ -56,6 +56,22 @@ public class OcanFormOptionDao extends AbstractDao<OcanFormOption> {
 
 		return (results);
 	}
+	
+	public List<OcanFormOption> findByVersionAndCategory(String formVersion, String mainCatgeory, boolean numberOrder) {
+		// build sql string
+		String sqlCommand = "select x from OcanFormOption x where x.ocanFormVersion=?1 and x.ocanDataCategory=?2 order by x.ocanDataCategoryName";
+
+		// set parameters
+		Query query = entityManager.createQuery(sqlCommand);
+		query.setParameter(1, formVersion);
+		query.setParameter(2, mainCatgeory);
+
+		// run query
+		@SuppressWarnings("unchecked")
+		List<OcanFormOption> results = query.getResultList();
+
+		return (results);
+	}
 
 	/**
 	 * @param formVersion should be the major cds version, i.e. '4' (we're assuming minor versions are compatable, if it's not we can use the full version number instead)

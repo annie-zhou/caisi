@@ -53,6 +53,8 @@ import org.oscarehr.common.model.OcanStaffFormData;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
 
+import oscar.OscarProperties;
+
 
 public class OcanForm {
 	
@@ -277,6 +279,17 @@ public class OcanForm {
 			return "F";
 		}
 		return "UNK";
+	}
+	
+	public static List<OcanFormOption> getOcanFormOptions(String ocanVersion, String category)
+	{
+		String ocanVersionStr = "1.2";
+		if(ocanVersion!=null && ocanVersion.trim().length()>0)
+		{
+			ocanVersionStr = ocanVersion;
+		}
+		List<OcanFormOption> results=ocanFormOptionDao.findByVersionAndCategory(ocanVersionStr, category);
+		return(results);
 	}
 	
 	public static List<OcanFormOption> getOcanFormOptions(String category)
@@ -688,12 +701,22 @@ public class OcanForm {
 	
 	public static String renderAsTextArea(Integer ocanStaffFormId, String question, int rows, int cols, int prepopulationLevel, boolean clientForm)
 	{
+		return renderAsTextArea(ocanStaffFormId, question, rows, cols, prepopulationLevel, clientForm, false);
+	}
+	
+	public static String renderAsTextArea(Integer ocanStaffFormId, String question, int rows, int cols, int prepopulationLevel, boolean clientForm, boolean mandatory)
+	{
 		List<OcanStaffFormData> existingAnswers= null;
 		List<OcanStaffFormData> existingClientAnswers=null;
 
 		StringBuilder sb=new StringBuilder();
 
-		sb.append("<textarea maxlength=\"512\" name=\""+question+"\" id=\""+question+"\" rows=\"" + rows + "\" cols=\"" + cols + "\">");
+		String mandatoryStr = "";
+		if(mandatory)
+		{
+			mandatoryStr = "class=\"{validate: {required:true}}\"";
+		}
+		sb.append("<textarea maxlength=\"512\" name=\""+question+"\" id=\""+question+"\" rows=\"" + rows + "\" cols=\"" + cols + "\" "+mandatoryStr+"  >");
 
 		if(!clientForm) {
 			existingAnswers=getStaffAnswers(ocanStaffFormId, question, prepopulationLevel);
@@ -845,6 +868,13 @@ public class OcanForm {
 			optionMap.put(option.getOcanDataCategoryValue(), option);
 		}
 		
+		String ocanVersionStr = "";
+		int ocanVersion = 0;
+		if(OscarProperties.getInstance().getProperty("ocan.version", "").trim().length()>0)
+		{
+			ocanVersionStr = OscarProperties.getInstance().getProperty("ocan.version", "").trim();
+			ocanVersion = Double.valueOf(ocanVersionStr).intValue();
+		}
 		
 		sb.append("<h4>Pre-Charge</h4>");
 		renderSingleCheckbox(optionMap.get("013-01"),sb,question,existingAnswers);
@@ -870,6 +900,8 @@ public class OcanForm {
 		renderSingleCheckbox(optionMap.get("013-14"),sb,question,existingAnswers);
 		renderSingleCheckbox(optionMap.get("013-15"),sb,question,existingAnswers);
 		renderSingleCheckbox(optionMap.get("013-16"),sb,question,existingAnswers);
+		if(ocanVersion==3)
+			renderSingleCheckbox(optionMap.get("013-22"),sb,question,existingAnswers);
 		sb.append("<h4>Other</h4>");
 		renderSingleCheckbox(optionMap.get("013-21"),sb,question,existingAnswers);
 		renderSingleCheckbox(optionMap.get("UNK"),sb,question,existingAnswers);

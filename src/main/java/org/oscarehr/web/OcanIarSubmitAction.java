@@ -35,13 +35,27 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.oscarehr.util.MiscUtils;
 
+import oscar.OscarProperties;
+
 public class OcanIarSubmitAction extends DispatchAction {
 
 	Logger logger = MiscUtils.getLogger();
 	
 	public ActionForward submit(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
 		
-		int submissionId_full = OcanReportUIBean.sendSubmissionToIAR(OcanReportUIBean.generateOCANSubmission("FULL"));
+		String ocanVersionStr = "";
+		int ocanVersion = 0;
+		if(OscarProperties.getInstance().getProperty("ocan.version", "").trim().length()>0)
+		{
+			ocanVersionStr = OscarProperties.getInstance().getProperty("ocan.version", "").trim();
+			ocanVersion = Double.valueOf(ocanVersionStr).intValue();
+		}
+		
+		int submissionId_full = 0;
+		if(ocanVersion==3)
+			submissionId_full = OcanReportUIBeanV3.sendSubmissionToIAR(OcanReportUIBeanV3.generateOCANSubmission("FULL"), "FULL");
+		else
+			submissionId_full = OcanReportUIBean.sendSubmissionToIAR(OcanReportUIBean.generateOCANSubmission("FULL"), "FULL");
 		
 		try {
 			response.getWriter().println(submissionId_full);
@@ -49,7 +63,11 @@ public class OcanIarSubmitAction extends DispatchAction {
 			logger.error("Error",e);
 		}
 		
-		int submissionId_self = OcanReportUIBean.sendSubmissionToIAR(OcanReportUIBean.generateOCANSubmission("SELF"));
+		int submissionId_self = 0;
+		if(ocanVersion==3)
+			submissionId_self = OcanReportUIBeanV3.sendSubmissionToIAR(OcanReportUIBeanV3.generateOCANSubmission("SELF"));
+		else
+			submissionId_self = OcanReportUIBean.sendSubmissionToIAR(OcanReportUIBean.generateOCANSubmission("SELF"));
 		
 		try {
 			response.getWriter().println(submissionId_self);
@@ -57,7 +75,11 @@ public class OcanIarSubmitAction extends DispatchAction {
 			logger.error("Error:",e);
 		}
 		
-		int submissionId_core = OcanReportUIBean.sendSubmissionToIAR(OcanReportUIBean.generateOCANSubmission("CORE"));
+		int submissionId_core = 0;
+		if(ocanVersion==3)
+			submissionId_core = OcanReportUIBeanV3.sendSubmissionToIAR(OcanReportUIBeanV3.generateOCANSubmission("CORE"));			
+		else
+			submissionId_core = OcanReportUIBean.sendSubmissionToIAR(OcanReportUIBean.generateOCANSubmission("CORE"));
 		
 		try {
 			response.getWriter().println(submissionId_core);

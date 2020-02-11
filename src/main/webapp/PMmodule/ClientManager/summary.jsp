@@ -571,50 +571,68 @@ function updateCdsForm(message, cdsFormId) {
 			</tr>
 		<%
 
-
+		String ocanVersionStr = "";
+		String ocanVersionDisplayStr = "2.0";
+		int ocanVersion = 0;
+		if(OscarProperties.getInstance().getProperty("ocan.version", "").trim().length()>0)
+		{
+			ocanVersionStr = OscarProperties.getInstance().getProperty("ocan.version", "").trim();
+			ocanVersion = Double.valueOf(ocanVersionStr).intValue();
+			ocanVersionDisplayStr = ocanVersionStr;
+		}
+		
 		if (LoggedInInfo.loggedInInfo.get().currentFacility.isEnableOcanForms())
 		{
 	%>
 	<tr>
-		<td width="20%">FULL OCAN 2.0 Staff Assessment</td>
+		<td width="20%">FULL OCAN <%=ocanVersionDisplayStr %> Staff Assessment</td>
 		<c:if test="${ocanStaffForm != null}">
 			<td><c:out value="${ocanStaffForm.created}" /></td>
 			<td><c:out value="${ocanStaffForm.providerName}" /></td>
 			<td><c:out value="${ocanStaffForm.assessmentStatus}" /></td>
 			<td>
-				<input type="button" value="Update" onclick="document.location='ClientManager/ocan_form.jsp?ocanType=FULL&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
-				<input type="button" value="Print Preview" onclick="document.location='ClientManager/ocan_form.jsp?ocanType=FULL&demographicId=<%=currentDemographic.getDemographicNo()%>&print=true'" />
-				<input type="button" value="Blank Form" onclick="window.open('<html:rewrite page="/ocan/OCAN_2.0_FULL_v2.0.5.pdf"/>')"/>
+				<input type="button" value="Update" onclick="document.location='ClientManager/ocan_form<%=(ocanVersion>0?ocanVersion:"") %>.jsp?ocanType=FULL&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
+				<input type="button" value="Print Preview" onclick="document.location='ClientManager/ocan_form<%=(ocanVersion>0?ocanVersion:"") %>.jsp?ocanType=FULL&demographicId=<%=currentDemographic.getDemographicNo()%>&print=true'" />
+				<%if(ocanVersion==3){ %>
+					<input type="button" value="Blank Form" onclick="window.open('<html:rewrite page="/ocan/ocan3/OCAN_3.0_FULL_v0.2_20180420.pdf"/>')"/>
+				<%}else{ %>
+					<input type="button" value="Blank Form" onclick="window.open('<html:rewrite page="/ocan/OCAN_2.0_FULL_v2.0.5.pdf"/>')"/>
+				<%} %>
 			</td>
 		</c:if>
 		<c:if test="${ocanStaffForm == null}">
 			<td><span style="color: red">None found</span></td>
 			<td></td>
 			<td>
-				<input type="button" value="New FULL OCAN Form" onclick="document.location='ClientManager/ocan_form.jsp?prepopulate=0&ocanType=FULL&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
-				<input type="button" value="New FULL OCAN Form - Prepopulated" onclick="document.location='ClientManager/ocan_form.jsp?prepopulate=1&ocanType=FULL&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
+				<input type="button" value="New FULL OCAN Form" onclick="document.location='ClientManager/ocan_form<%=(ocanVersion>0?ocanVersion:"") %>.jsp?prepopulate=0&ocanType=FULL&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
+				<input type="button" value="New FULL OCAN Form - Prepopulated" onclick="document.location='ClientManager/ocan_form<%=(ocanVersion>0?ocanVersion:"") %>.jsp?prepopulate=1&ocanType=FULL&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
 			</td>
-			<td><input type="button" value="Blank Form" onclick="window.open('<html:rewrite page="/ocan/OCAN_2.0_FULL_v2.0.5.pdf"/>')"/>
+			<td>
+			<%if(ocanVersion==3){ %>
+				<input type="button" value="Blank Form" onclick="window.open('<html:rewrite page="/ocan/ocan3/OCAN_3.0_FULL_v0.2_20180420.pdf"/>')"/>
+			<%}else{ %>
+				<input type="button" value="Blank Form" onclick="window.open('<html:rewrite page="/ocan/OCAN_2.0_FULL_v2.0.5.pdf"/>')"/>
+			<%} %>
 			</td>
 		</c:if>
 	</tr>
 
 	<tr>
-		<td width="20%">FULL OCAN 2.0 Consumer Self-Assessment</td>
+		<td width="20%">FULL OCAN <%=ocanVersionDisplayStr %> Consumer Self-Assessment</td>
 		<c:if test="${ocanStaffForm != null}">
 			<td><c:out value="${ocanStaffForm.clientFormCreated}" /></td>
 			<td><c:out value="${ocanStaffForm.clientFormProviderName}" /></td>
 			<td>N/A</td>
 			<td>
-				<input type="button" value="Update" onclick="document.location='ClientManager/ocan_client_form.jsp?ocanType=FULL&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
-				<input type="button" value="Print Preview" onclick="document.location='ClientManager/ocan_client_form.jsp?ocanType=FULL&demographicId=<%=currentDemographic.getDemographicNo()%>&print=true'" />
+				<input type="button" value="Update" onclick="document.location='ClientManager/ocan_client_form<%=(ocanVersion>0?ocanVersion:"") %>.jsp?ocanType=FULL&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
+				<input type="button" value="Print Preview" onclick="document.location='ClientManager/ocan_client_form<%=(ocanVersion>0?ocanVersion:"") %>.jsp?ocanType=FULL&demographicId=<%=currentDemographic.getDemographicNo()%>&print=true'" />
 			</td>
 		</c:if>
 		<c:if test="${ocanStaffForm == null}">
 			<td><span style="color: red">None found</span></td>
 			<td></td>
 			<td>
-				<input type="button" value="New FULL OCAN Form" onclick="document.location='ClientManager/ocan_client_form.jsp?prepopulate=0&ocanType=FULL&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
+				<input type="button" value="New FULL OCAN Form" onclick="document.location='ClientManager/ocan_client_form<%=(ocanVersion>0?ocanVersion:"") %>.jsp?prepopulate=0&ocanType=FULL&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
 			</td>
 			<td>
 			</td>
@@ -623,15 +641,20 @@ function updateCdsForm(message, cdsFormId) {
 
 
 	<tr>
-		<td width="20%">SELF+CORE OCAN 2.0 Staff Assessment</td>
+		<td width="20%">SELF+CORE OCAN <%=ocanVersionDisplayStr %> Staff Assessment</td>
 		<c:if test="${selfOcanStaffForm != null}">
 			<td><c:out value="${selfOcanStaffForm.created}" /></td>
 			<td><c:out value="${selfOcanStaffForm.providerName}" /></td>
 			<td><c:out value="${selfOcanStaffForm.assessmentStatus}" /></td>
 			<td>
-				<input type="button" value="Update" onclick="document.location='ClientManager/ocan_form.jsp?ocanType=SELF&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
-				<input type="button" value="Print Preview" onclick="document.location='ClientManager/ocan_form.jsp?ocanType=SELF&demographicId=<%=currentDemographic.getDemographicNo()%>&print=true'" />
-				<input type="button" value="Blank Form" onclick="window.open('<html:rewrite page="/ocan/OCAN_2.0_CORE_SELF_v2.0.5.pdf"/>')"/>
+				<input type="button" value="Update" onclick="document.location='ClientManager/ocan_form<%=(ocanVersion>0?ocanVersion:"") %>.jsp?ocanType=SELF&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
+				<input type="button" value="Print Preview" onclick="document.location='ClientManager/ocan_form<%=(ocanVersion>0?ocanVersion:"") %>.jsp?ocanType=SELF&demographicId=<%=currentDemographic.getDemographicNo()%>&print=true'" />
+				
+				<%if(ocanVersion==3){ %>
+					<input type="button" value="Blank Form" onclick="window.open('<html:rewrite page="/ocan/ocan3/OCAN_3.0_CORE+SELF_v0.2_20180420.pdf"/>')"/>
+				<%}else{ %>
+					<input type="button" value="Blank Form" onclick="window.open('<html:rewrite page="/ocan/OCAN_2.0_CORE_SELF_v2.0.5.pdf"/>')"/>
+				<%} %>
 
 			</td>
 		</c:if>
@@ -639,24 +662,34 @@ function updateCdsForm(message, cdsFormId) {
 			<td><span style="color: red">None found</span></td>
 			<td></td>
 			<td>
-				<input type="button" value="New SELF+CORE OCAN Form" onclick="document.location='ClientManager/ocan_form.jsp?prepopulate=0&ocanType=SELF&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
-				<input type="button" value="New SELF+CORE OCAN Form - Prepopulated" onclick="document.location='ClientManager/ocan_form.jsp?prepopulate=1&ocanType=SELF&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
+				<input type="button" value="New SELF+CORE OCAN Form" onclick="document.location='ClientManager/ocan_form<%=(ocanVersion>0?ocanVersion:"") %>.jsp?prepopulate=0&ocanType=SELF&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
+				<input type="button" value="New SELF+CORE OCAN Form - Prepopulated" onclick="document.location='ClientManager/ocan_form<%=(ocanVersion>0?ocanVersion:"") %>.jsp?prepopulate=1&ocanType=SELF&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
 			</td>
-			<td><input type="button" value="Blank Form" onclick="window.open('<html:rewrite page="/ocan/OCAN_2.0_CORE_SELF_v2.0.5.pdf"/>')"/>
-				</td>
+			<td>
+			<%if(ocanVersion==3){ %>
+				<input type="button" value="Blank Form" onclick="window.open('<html:rewrite page="/ocan/ocan3/OCAN_3.0_CORE+SELF_v0.2_20180420.pdf"/>')"/>
+			<%}else{ %>
+				<input type="button" value="Blank Form" onclick="window.open('<html:rewrite page="/ocan/OCAN_2.0_CORE_SELF_v2.0.5.pdf"/>')"/>
+			<%} %>
+			</td>
 		</c:if>
 	</tr>
 
 	<tr>
-		<td width="20%">SELF+CORE OCAN 2.0 Consumer Self-Assessment</td>
+		<td width="20%">SELF+CORE OCAN <%=ocanVersionDisplayStr %> Consumer Self-Assessment</td>
 		<c:if test="${selfOcanStaffForm != null}">
 			<td><c:out value="${selfOcanStaffForm.clientFormCreated}" /></td>
 			<td><c:out value="${selfOcanStaffForm.clientFormProviderName}" /></td>
 			<td>N/A</td>
 			<td>
-				<input type="button" value="Update" onclick="document.location='ClientManager/ocan_client_form.jsp?ocanType=SELF&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
-				<input type="button" value="Print Preview" onclick="document.location='ClientManager/ocan_client_form.jsp?ocanType=SELF&demographicId=<%=currentDemographic.getDemographicNo()%>&print=true'" />
-				<input type="button" value="Blank Form" onclick="window.open('<html:rewrite page="/ocan/OCAN_2.0_CORE_SELF_v2.0.5.pdf"/>')"/>
+				<input type="button" value="Update" onclick="document.location='ClientManager/ocan_client_form<%=(ocanVersion>0?ocanVersion:"") %>.jsp?ocanType=SELF&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
+				<input type="button" value="Print Preview" onclick="document.location='ClientManager/ocan_client_form<%=(ocanVersion>0?ocanVersion:"") %>.jsp?ocanType=SELF&demographicId=<%=currentDemographic.getDemographicNo()%>&print=true'" />
+				
+				<%if(ocanVersion==3){ %>
+					<input type="button" value="Blank Form" onclick="window.open('<html:rewrite page="/ocan/ocan3/OCAN_3.0_CORE+SELF_v0.2_20180420.pdf"/>')"/>
+				<%}else{ %>
+					<input type="button" value="Blank Form" onclick="window.open('<html:rewrite page="/ocan/OCAN_2.0_CORE_SELF_v2.0.5.pdf"/>')"/>
+				<%} %>
 
 			</td>
 		</c:if>
@@ -664,22 +697,27 @@ function updateCdsForm(message, cdsFormId) {
 			<td><span style="color: red">None found</span></td>
 			<td></td>
 			<td>
-				<input type="button" value="New SELF+CORE OCAN Form" onclick="document.location='ClientManager/ocan_client_form.jsp?prepopulate=0&ocanType=SELF&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
+				<input type="button" value="New SELF+CORE OCAN Form" onclick="document.location='ClientManager/ocan_client_form<%=(ocanVersion>0?ocanVersion:"") %>.jsp?prepopulate=0&ocanType=SELF&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
 			</td>
 			<td></td>
 		</c:if>
 	</tr>
 
 	<tr>
-		<td width="20%">CORE OCAN 2.0 Assessment</td>
+		<td width="20%">CORE OCAN <%=ocanVersionDisplayStr %> Assessment</td>
 		<c:if test="${coreOcanStaffForm != null}">
 			<td><c:out value="${coreOcanStaffForm.created}" /></td>
 			<td><c:out value="${coreOcanStaffForm.providerName}" /></td>
 			<td><c:out value="${coreOcanStaffForm.assessmentStatus}" /></td>
 			<td>
-				<input type="button" value="Update" onclick="document.location='ClientManager/ocan_form.jsp?ocanType=CORE&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
-				<input type="button" value="Print Preview" onclick="document.location='ClientManager/ocan_form.jsp?ocanType=CORE&demographicId=<%=currentDemographic.getDemographicNo()%>&print=true'" />
-				<input type="button" value="Blank Form" onclick="window.open('<html:rewrite page="/ocan/OCAN_2.0_CORE_v2.0.5.pdf"/>')"/>
+				<input type="button" value="Update" onclick="document.location='ClientManager/ocan_form<%=(ocanVersion>0?ocanVersion:"") %>.jsp?ocanType=CORE&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
+				<input type="button" value="Print Preview" onclick="document.location='ClientManager/ocan_form<%=(ocanVersion>0?ocanVersion:"") %>.jsp?ocanType=CORE&demographicId=<%=currentDemographic.getDemographicNo()%>&print=true'" />
+				
+				<%if(ocanVersion==3){ %>
+					<input type="button" value="Blank Form" onclick="window.open('<html:rewrite page="/ocan/ocan3/OCAN_3.0_CORE_v0.2_20180420.pdf"/>')"/>
+				<%}else{ %>
+					<input type="button" value="Blank Form" onclick="window.open('<html:rewrite page="/ocan/OCAN_2.0_CORE_v2.0.5.pdf"/>')"/>
+				<%} %>
 
 			</td>
 		</c:if>
@@ -687,12 +725,17 @@ function updateCdsForm(message, cdsFormId) {
 			<td><span style="color: red">None found</span></td>
 			<td></td>
 			<td>
-				<input type="button" value="New CORE OCAN Form" onclick="document.location='ClientManager/ocan_form.jsp?prepopulate=0&ocanType=CORE&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
+				<input type="button" value="New CORE OCAN Form" onclick="document.location='ClientManager/ocan_form<%=(ocanVersion>0?ocanVersion:"") %>.jsp?prepopulate=0&ocanType=CORE&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
 
-				<input type="button" value="New CORE OCAN Form - Prepopulated" onclick="document.location='ClientManager/ocan_form.jsp?prepopulate=1&ocanType=CORE&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
+				<input type="button" value="New CORE OCAN Form - Prepopulated" onclick="document.location='ClientManager/ocan_form<%=(ocanVersion>0?ocanVersion:"") %>.jsp?prepopulate=1&ocanType=CORE&demographicId=<%=currentDemographic.getDemographicNo()%>'" />
 			</td>
-			<td><input type="button" value="Blank Form" onclick="window.open('<html:rewrite page="/ocan/OCAN_2.0_CORE_v2.0.5.pdf"/>')"/>
-				</td>
+			<td>
+				<%if(ocanVersion==3){ %>
+					<input type="button" value="Blank Form" onclick="window.open('<html:rewrite page="/ocan/ocan3/OCAN_3.0_CORE_v0.2_20180420.pdf"/>')"/>
+				<%}else{ %>
+					<input type="button" value="Blank Form" onclick="window.open('<html:rewrite page="/ocan/OCAN_2.0_CORE_v2.0.5.pdf"/>')"/>
+				<%} %>
+			</td>
 		</c:if>
 	</tr>
 

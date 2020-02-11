@@ -3031,8 +3031,8 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		}*/
 		
 		if(!isEmpty(year_arrived_in_canada)){
-			SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd");
-			String year_arrived_in_canada_str = "01/01"+year_arrived_in_canada;
+			SimpleDateFormat formatter1 = new SimpleDateFormat("dd/MM/yyyy");
+			String year_arrived_in_canada_str = "01/01/"+year_arrived_in_canada;
 			
 			try {
 				Calendar year_arrived_in_canada_obj = convertToOcanXmlCalendar(formatter1.parse(year_arrived_in_canada_str));

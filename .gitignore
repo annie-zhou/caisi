@@ -1,4 +1,6 @@
+/bin/
 /target/
+org.eclipse*
 /.DS_Store
-.classpath
 .project
+.jsdtscope*

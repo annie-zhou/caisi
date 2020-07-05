@@ -37,10 +37,10 @@ insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCateg
 select max(id)+1 ,"3.0","Administrative Gender","INT","Intersex" FROM OcanFormOption;
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName)
-select max(id)+1 ,"3.0","Administrative Gender","TM","Trans- Female to Male" FROM OcanFormOption;
+select max(id)+1 ,"3.0","Administrative Gender","TM","Trans-Female to Male" FROM OcanFormOption;
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName)
-select max(id)+1 ,"3.0","Administrative Gender","TF","Trans- Male to Female" FROM OcanFormOption;
+select max(id)+1 ,"3.0","Administrative Gender","TF","Trans-Male to Female" FROM OcanFormOption;
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName)
 select max(id)+1 ,"3.0","Administrative Gender","CDA","Prefer not to answer" FROM OcanFormOption;
@@ -123,10 +123,10 @@ insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCateg
 select max(id)+1 ,"3.0","Age of Onset","EST","Estimate" FROM OcanFormOption;
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName)
-select max(id)+1 ,"3.0","Age of Onset","CDA","Prefer not to answer" FROM OcanFormOption;
+select max(id)+1 ,"3.0","Age of Onset","CDA","Consumer Declined to Answer" FROM OcanFormOption;
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName)
-select max(id)+1 ,"3.0","Age of Onset","UNK","Do not know" FROM OcanFormOption;
+select max(id)+1 ,"3.0","Age of Onset","UNK","Unknown" FROM OcanFormOption;
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName)
 select max(id)+1 ,"3.0","Age of Onset","NA","N/A" FROM OcanFormOption;
@@ -237,7 +237,7 @@ insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCateg
 select max(id)+1 ,"3.0","Legal History Type","013-04","Awaiting trial (with or without bail)" FROM OcanFormOption;
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
-select max(id)+1 ,"3.0","Legal History Type","013-05","Awaiting Criminal Responsibility Assessment (NCR)" FROM OcanFormOption;
+select max(id)+1 ,"3.0","Legal History Type","013-05","Awaiting criminal responsibility assessment (NCR)" FROM OcanFormOption;
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
 select max(id)+1 ,"3.0","Legal History Type","013-06","In community on own recognizance" FROM OcanFormOption;
@@ -436,7 +436,7 @@ insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCateg
 select max(id)+1 ,"3.0","Employment Status","224364001","Casual/Sporadic" FROM OcanFormOption;
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
-select max(id)+1 ,"3.0","Employment Status","73438004","No employment - of any kind" FROM OcanFormOption;
+select max(id)+1 ,"3.0","Employment Status","73438004","No employment of any kind" FROM OcanFormOption;
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
 select max(id)+1 ,"3.0","Employment Status","UNK","Do not know" FROM OcanFormOption;
@@ -495,7 +495,7 @@ insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCateg
 select max(id)+1 ,"3.0","Emergency Department","ED-2","2-5" FROM OcanFormOption;
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
-select max(id)+1 ,"3.0","Emergency Department","ED-6","6+" FROM OcanFormOption;
+select max(id)+1 ,"3.0","Emergency Department","ED-6",">6" FROM OcanFormOption;
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
 select max(id)+1 ,"3.0","Emergency Department","CDA","Prefer not to answer" FROM OcanFormOption;
@@ -1255,7 +1255,11 @@ select max(id)+1 ,"3.0","Referral Source","CSB","Short Term Residential Crisis S
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
 select max(id)+1 ,"3.0","Referral Source","CJSS","Criminal Justice System Source breakdown not available (use this category if above detailed breakdown is not available)" FROM OcanFormOption;
 
+insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
+select max(id)+1 ,"3.0","Referral Source","CHS","Cultural Healing Services" FROM OcanFormOption;
 
+insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
+select max(id)+1 ,"3.0","Referral Source","NPH","Non-Profit Housing" FROM OcanFormOption;
 -- ----------------------------------------------------------------------
 -- Language
 
@@ -1871,6 +1875,33 @@ select max(id)+1 ,"3.0","Reason for Difference","RD-9","Need exists but client n
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
 select max(id)+1 ,"3.0","Reason for Difference","RD-10","Service available but only partially meets client's need" FROM OcanFormOption;
+
+-- ----------------------------------------------------------------------
+-- Marital Status
+insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
+select max(id)+1 ,"3.0","Marital Status","125681006","Single" FROM OcanFormOption;
+
+insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
+select max(id)+1 ,"3.0","Marital Status","87915002","Married or in common-law relationship" FROM OcanFormOption;
+
+insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
+select max(id)+1 ,"3.0","Marital Status","42120006","Partner or significant other" FROM OcanFormOption;
+
+insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
+select max(id)+1 ,"3.0","Marital Status","33553000","Widowed" FROM OcanFormOption;
+
+insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
+select max(id)+1 ,"3.0","Marital Status","13184001","Separated" FROM OcanFormOption;
+
+insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
+select max(id)+1 ,"3.0","Marital Status","20295000","Divorced" FROM OcanFormOption;
+
+insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
+select max(id)+1 ,"3.0","Marital Status","UNK","Do not know" FROM OcanFormOption;
+
+insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
+select max(id)+1 ,"3.0","Marital Status","CDA","Prefer not to answer" FROM OcanFormOption;
+
 
 
 -- ----------------------------------------------------------------------

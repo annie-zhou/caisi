@@ -833,7 +833,7 @@ Client date of birth : <%=ocanStaffForm.getClientDateOfBirth()%>
 		
 		
 		<tr>
-			<td class="genericTableHeader">What is your gender? (Select One)</td>
+			<td class="genericTableHeader">What is your gender? (Select One)*</td>
 			<td class="genericTableData">
 				<select name="gender" class="{validate: {required:true}}">
 					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "gender", OcanForm.getOcanFormOptions(ocanVersionStr, "Administrative Gender"),ocanStaffForm.getGender(),prepopulationLevel)%>
@@ -845,7 +845,7 @@ Client date of birth : <%=ocanStaffForm.getClientDateOfBirth()%>
 			<td class="genericTableHeader">Marital Status (Select One)</td>
 			<td class="genericTableData">
 				<select name="marital_status" class="{validate: {required:true}}>
-					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "marital_status", OcanForm.getOcanFormOptions("Marital Status"),prepopulationLevel)%>
+					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "marital_status", OcanForm.getOcanFormOptions(ocanVersionStr, "Marital Status"),prepopulationLevel)%>
 				</select>					
 			</td>
 		</tr>	
@@ -1717,7 +1717,7 @@ Client date of birth : <%=ocanStaffForm.getClientDateOfBirth()%>
 		</tr>
 		
 		<tr>
-			<td class="genericTableHeader">Age in Years for Onset of Mental Illness </td>
+			<td class="genericTableHeader">Age in Years for Onset of Mental Illness:*</td>
 			<td class="genericTableData">
 			<%  input = OcanForm.renderAsTextField(ocanStaffForm.getId(),"ageOnsetMental_year",4,prepopulationLevel);
 				input = input.substring(0,input.length()-2);
@@ -1729,7 +1729,7 @@ Client date of birth : <%=ocanStaffForm.getClientDateOfBirth()%>
 		</tr>
 		<!-- duplication? removed. 
 		<tr>
-			<td class="genericTableHeader">Age in Months for Onset of Mental Illness </td>
+			<td class="genericTableHeader">Age in Months for Onset of Mental Illness:*</td>
 			<td class="genericTableData">
 				<select name="ageOnsetMental_month" id="ageOnsetMental_month">
 					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "ageOnsetMental_month", OcanForm.getOcanFormOptions("Age in Months"),prepopulationLevel)%>
@@ -1800,7 +1800,7 @@ Client date of birth : <%=ocanStaffForm.getClientDateOfBirth()%>
 		
 		<tr>
 			<%--- <td class="genericTableHeader">What culture do you (Consumer) identify with?</td> --%>
-			<td class="genericTableHeader">Which of the following best describe your racial or ethnic group? (select one)</td>
+			<td class="genericTableHeader">Which of the following best describe your racial or ethnic group? (select one)*</td>
 			<td class="genericTableData">
 				<select name="culture" id="culture" class="{validate: {required:true}}>
 					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "culture", OcanForm.getOcanFormOptions(ocanVersionStr, "Ethniticity"),prepopulationLevel)%>
@@ -1937,7 +1937,7 @@ Client date of birth : <%=ocanStaffForm.getClientDateOfBirth()%>
 		</tr>	
 		
 		<tr>
-			<td class="genericTableHeader">Language of Service Provision?</td>
+			<td class="genericTableHeader">Language of Service Provision:*</td>
 			<td class="genericTableData">
 				<select name="language_service_provision" id="language_service_provision" class="{validate: {required:true}}">
 					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "language_service_provision", OcanForm.getOcanFormOptions(ocanVersionStr, "Language"),prepopulationLevel)%>
@@ -1962,7 +1962,7 @@ Client date of birth : <%=ocanStaffForm.getClientDateOfBirth()%>
 		</tr>	
 		
 		<tr>
-			<td class="genericTableHeader">If your mother tongue is neither French nor English, which of Canada's official languages are you most comfortable?</td>
+			<td class="genericTableHeader">If your mother tongue is neither French nor English, which of Canada's official languages are you most comfortable?*</td>
 			<td class="genericTableData">
 				<select name="language_comfortable" class="{validate: {required:true}}">
 					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "language_comfortable", OcanForm.getOcanFormOptions(ocanVersionStr, "Language_Comfort"),prepopulationLevel)%>
@@ -1980,14 +1980,14 @@ Client date of birth : <%=ocanStaffForm.getClientDateOfBirth()%>
 		</tr>
 		
 		<tr>
-			<td class="genericTableHeader">Comment on Legal Issues </td>
+			<td class="genericTableHeader">Comments on Legal Issues: </td>
 			<td class="genericTableData">
 				<%=OcanForm.renderAsTextField(ocanStaffForm.getId(),"legal_issues_other",128, prepopulationLevel)%>
 			</td>
 		</tr>	
 							
 		<tr>
-			<td class="genericTableHeader">Current legal status (Select all that apply)</td>
+			<td class="genericTableHeader">Current legal status (Select all that apply)*</td>
 			<td class="genericTableData">
 				<%=OcanForm.renderLegalStatusOptions(ocanStaffForm.getId(), "legal_status", OcanForm.getOcanFormOptions(ocanVersionStr, "Legal History Type"),prepopulationLevel,false)%>						
 			</td>
@@ -2106,7 +2106,7 @@ Client date of birth : <%=ocanStaffForm.getClientDateOfBirth()%>
 		</tr>
 		
 		<tr>
-			<td class="genericTableHeader">Do you live with anyone? (Select all that apply)</td>
+			<td class="genericTableHeader">Do you live with anyone? (Select all that apply)*</td>
 			<td class="genericTableData">
 				<select name="1_live_with_anyone" id="1_live_with_anyone" class="{validate: {required:true}}">
 					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "1_live_with_anyone", OcanForm.getOcanFormOptions(ocanVersionStr, "Living Arrangement Type"),prepopulationLevel)%>
@@ -2394,7 +2394,7 @@ Client date of birth : <%=ocanStaffForm.getClientDateOfBirth()%>
 		</tr>		
 <% } %>
 		<tr>
-			<td class="genericTableHeader">What is your current employment status? (Select One)</td>
+			<td class="genericTableHeader">What is your current employments status? (Select One)</td>
 			<td class="genericTableData">
 				<select name="5_current_employment_status" class="{validate: {required:true}}">
 					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "5_current_employment_status", OcanForm.getOcanFormOptions(ocanVersionStr, "Employment Status"),prepopulationLevel)%>
@@ -2657,7 +2657,7 @@ This information is collected from a variety of sources, including self-report, 
 		</tr>
 		
 		<tr>
-			<td class="genericTableHeader">Have you been hospitalized due to your mental health (Select one). If Initial Assessment during the past two years otherwise since last Assessment?</td>
+			<td class="genericTableHeader">Have you been hospitalized due to your mental health (Select one)*. If Initial OCAN, during the past two years OR if reassessment, since the last OCAN</td>
 			<td class="genericTableData">
 				<select name="hospitalized_mental_illness" id="hospitalized_mental_illness" class="{validate: {required:true}}">
 					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "hospitalized_mental_illness", OcanForm.getOcanFormOptions(ocanVersionStr, "common_options_yes_no"),prepopulationLevel)%>
@@ -2686,7 +2686,7 @@ This information is collected from a variety of sources, including self-report, 
 			</td>
 		</tr>	
 		<tr>
-			<td class="genericTableHeader">How many times did you visit an Emergency Department in the last 6 months for Mental Health Reasons?</td>
+			<td class="genericTableHeader">How many times did you visit an Emergency Department in the last 6 months for Mental Health Reasons?*</td>
 			<td class="genericTableData">
 				<select name="visitEmergencyDepartment" id="visitEmergencyDepartment" class="{validate: {required:true}}">
 					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "visitEmergencyDepartment", OcanForm.getOcanFormOptions(ocanVersionStr, "Emergency Department"),prepopulationLevel)%>
@@ -2695,7 +2695,7 @@ This information is collected from a variety of sources, including self-report, 
 		</tr>		
 				
 		<tr>
-			<td class="genericTableHeader">Community Treatment Order</td>
+			<td class="genericTableHeader">Community Treatment Order:*</td>
 			<td class="genericTableData">
 				<select name="community_treatment_orders" class="{validate: {required:true}}">
 					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "community_treatment_orders", OcanForm.getOcanFormOptions(ocanVersionStr, "Community Treatment Orders"),prepopulationLevel)%>
@@ -4025,7 +4025,7 @@ This information is collected from a variety of sources, including self-report, 
 		</tr>
 		
 		<tr>
-			<td class="genericTableHeader">What is your total Family Income before taxes last year? (Select One) </td>
+			<td class="genericTableHeader">What is your total Family Income before taxes last year? (Select One)* </td>
 			<td class="genericTableData">
 				<select name="family_income" class="{validate: {required:true}}">
 					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "family_income", OcanForm.getOcanFormOptions(ocanVersionStr, "Family Income"),prepopulationLevel)%>

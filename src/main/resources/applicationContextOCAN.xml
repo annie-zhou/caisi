@@ -17,7 +17,7 @@
 			<bean class="org.oscarehr.util.OcanIarSubmissionTask">
 			</bean>
 		</property>
-		<property name="delay" value="10000" /> <!-- start job after 10 seconds -->
+		<property name="delay" value="${OCAN_IAR_JOB_DELAY}" /> <!-- start job after 10 seconds -->
 		<property name="period" value="${OCAN_IAR_JOB_INTERVAL}" />
 	</bean>
 	

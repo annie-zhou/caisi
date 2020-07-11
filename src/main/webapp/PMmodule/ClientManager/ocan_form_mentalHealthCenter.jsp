@@ -139,7 +139,7 @@ $('document').ready(function() {
 			</td>
 		</tr>
 		<tr>
-			<td class="genericTableHeader">Organizations LHIN</td>
+			<td class="genericTableHeader">Organization LHIN</td>
 			<td class="genericTableData">
 				<select name="serviceUseRecord_orgLHIN<%=centerNumber %>" id="serviceUseRecord_orgLHIN<%=centerNumber %>" onchange="changeOrgLHIN(this);" class="{validate: {required:true}}">					
 					<%=OcanForm.renderAsSelectOptions(ocanStaffForm.getId(), "serviceUseRecord_orgLHIN"+centerNumber, OcanForm.getOcanFormOptions("LHIN code"), prepopulationLevel)%>

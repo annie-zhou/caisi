@@ -436,7 +436,7 @@ insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCateg
 select max(id)+1 ,"3.0","Employment Status","224364001","Casual/Sporadic" FROM OcanFormOption;
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
-select max(id)+1 ,"3.0","Employment Status","73438004","No employment of any kind" FROM OcanFormOption;
+select max(id)+1 ,"3.0","Employment Status","73438004","No employment - of any kind" FROM OcanFormOption;
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
 select max(id)+1 ,"3.0","Employment Status","UNK","Do not know" FROM OcanFormOption;

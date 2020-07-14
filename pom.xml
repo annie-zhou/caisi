@@ -116,6 +116,13 @@
 			<artifactId>hapi-structures-v22</artifactId>
 			<version>1.0.1</version>
 		</dependency>
+		
+		<!-- jdom -->
+		 <dependency>
+                        <groupId>org.jdom</groupId>
+                        <artifactId>jdom</artifactId>
+                        <version>1.1</version>
+                </dependency>
 
 		<!-- spring -->
 		<dependency>

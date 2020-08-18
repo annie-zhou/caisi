@@ -1215,9 +1215,9 @@ $("document").ready(function() {
 		enableDisableTextOnChangeSelect("language_service_provision", "language_service_provision_other", "OTH");
 	});
 	
-	enableDisableTextOnChangeSelect("culture", "cultureother", "OTH");
+	enableDisableTextOnChangeSelect_("culture", "cultureother", "OTH", "16");
 	$("#culture").change(function() {
-		enableDisableTextOnChangeSelect("culture", "cultureother", "OTH");
+		enableDisableTextOnChangeSelect_("culture", "cultureother", "OTH", "16");
 	});
 	
 	enableDisableTextOnChangeSelect("preferred_language", "preferred_language_other", "OTH");
@@ -3375,6 +3375,16 @@ function checkForRequired(elementId) {
 		return true;
 	}
 	return false;
+}
+
+function enableDisableTextOnChangeSelect_(selectDropdownId, textboxId, valueToCheck1, valueToCheck2)
+{
+	if( $("#"+selectDropdownId).val() == valueToCheck1 || $("#"+selectDropdownId).val() == valueToCheck2) {
+		$("#"+textboxId).attr("disabled","");
+	}else{
+		$("#"+textboxId).attr("disabled","disabled");
+		$("#"+textboxId).val("");
+	}
 }
 
 function enableDisableTextOnChangeSelect(selectDropdownId, textboxId, valueToCheck)

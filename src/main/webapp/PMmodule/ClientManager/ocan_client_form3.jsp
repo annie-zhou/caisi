@@ -583,7 +583,7 @@ function submitOcanClientForm() {
 
 		
 		<tr>
-			<td colspan="2">21. Telephone</td>
+			<td colspan="2">21. Communication</td>
 		</tr>			
 
 		<tr>

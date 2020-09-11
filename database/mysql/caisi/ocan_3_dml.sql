@@ -1121,7 +1121,7 @@ insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCateg
 select max(id)+1 ,"3.0","MIS Functional Centre List","725 51 76 20","FI - Family Initiatives" FROM OcanFormOption;
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
-select max(id)+1 ,"3.0","MIS Functional Centre List","725 10 76 99","OTH - Other MH services not elsewhere classified" FROM OcanFormOption;
+select max(id)+1 ,"3.0","MIS Functional Centre List","725 107 699","OTH - Other MH services not elsewhere classified" FROM OcanFormOption;
 
 
 -- ----------------------------------------------------------------------
@@ -1638,6 +1638,13 @@ select max(id)+1 ,"3.0","Ethniticity","16","Mixed Heritage (e.g. Black-African &
 
 insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
 select max(id)+1 ,"3.0","Ethniticity","OTH","Other" FROM OcanFormOption;
+
+insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
+select max(id)+1 ,"3.0","Ethniticity","CDA","Prefer not to Answer" FROM OcanFormOption;
+
+insert into OcanFormOption (id, ocanFormVersion, ocanDataCategory, ocanDataCategoryValue, ocanDataCategoryName) 
+select max(id)+1 ,"3.0","Ethniticity","UNK","Do not Know" FROM OcanFormOption;
+
 
 -- ----------------------------------------------------------------------
 -- Diagnostic Source

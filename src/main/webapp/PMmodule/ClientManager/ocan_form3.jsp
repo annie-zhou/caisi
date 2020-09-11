@@ -1836,7 +1836,7 @@ Client date of birth : <%=ocanStaffForm.getClientDateOfBirth()%>
 		<tr>
 			<td class="genericTableHeader">What is your Sexual Orientation? - Other</td>
 			<td class="genericTableData">
-				<%=OcanForm.renderAsTextField(ocanStaffForm.getId(), "sex_orientation_other", 128,prepopulationLevel)%>						
+				<%=OcanForm.renderAsTextField(ocanStaffForm.getId(), "sex_orientation_other", 256,prepopulationLevel)%>						
 			</td>
 		</tr>	
 		

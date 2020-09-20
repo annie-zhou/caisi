@@ -1,13 +1,6 @@
-<<<<<<< HEAD
 /bin/
 /target/
 org.eclipse*
 /.DS_Store
 .project
 .jsdtscope*
-=======
-/target/
-/.DS_Store
-.classpath
-.project
->>>>>>> refs/remotes/origin/ocan_3_upgrade

@@ -52,7 +52,9 @@ import javax.xml.ws.BindingProvider;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.ws.security.WSPasswordCallback;
+import org.apache.xmlbeans.XmlGYear;
 import org.apache.xmlbeans.XmlOptions;
+import org.apache.xmlbeans.impl.values.XmlGYearImpl;
 import org.oscarehr.PMmodule.dao.AdmissionDao;
 import org.oscarehr.PMmodule.dao.OcanSubmissionLogDao;
 import org.oscarehr.PMmodule.model.Admission;
@@ -927,7 +929,14 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		clientType.setHealthCardInfo(convertClientHealthCardInfo2(ocanStaffForm, ocanStaffFormData));
 		
 		if(demographic!=null && !isEmpty(demographic.getSex()))
-			clientType.setSex(ca.ehealthontario.ccim.SexDocument.Sex.Enum.forString(demographic.getSex()));
+		{
+			String sex = demographic.getSex();
+			if(!sex.equals("F") && !sex.equals("M"))
+			{
+				sex = "O";
+			}
+			clientType.setSex(ca.ehealthontario.ccim.SexDocument.Sex.Enum.forString(sex));
+		}
 		
 		if(!"TRUE".equalsIgnoreCase(getStaffAnswer("consumerAnonymous",ocanStaffFormData))) {
 			String maritalStatusStr = getStaffAnswer("marital_status",ocanStaffFormData);
@@ -2068,8 +2077,13 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 			ocanDomains.setSourceOfIncome(convertSourceOfIncome(ocanStaffForm,ocanStaffFormData));
 
 			String sexualOrientationStr = getStaffAnswer("sex_orientation",ocanStaffFormData);
+			String sexualOrientation_other = getStaffAnswer("sex_orientation_other",ocanStaffFormData);
 			ca.ehealthontario.ccim.SexualOrientationDocument.SexualOrientation sexualOrientation = ca.ehealthontario.ccim.SexualOrientationDocument.SexualOrientation.Factory.newInstance();
 			sexualOrientation.setValue(ca.ehealthontario.ccim.SexualOrientationDocument.SexualOrientation.Value.Enum.forString(sexualOrientationStr));
+			if(sexualOrientation_other!=null && !isEmpty(sexualOrientation_other))
+			{
+				sexualOrientation.setOther(sexualOrientation_other);				
+			}
 			ocanDomains.setSexualOrientation(sexualOrientation);
 			
 			ocanDomains.setFamilyIncome(ca.ehealthontario.ccim.FamilyIncomeDocument.FamilyIncome.Enum.forString(getStaffAnswer("family_income",ocanStaffFormData)));
@@ -2140,6 +2154,19 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		case 1:
 			domain.setResidenceType(convertResidenceType(ocanStaffForm,ocanStaffFormData));
 			domain.setResidenceSupport(ca.ehealthontario.ccim.ResidenceSupportDocument.ResidenceSupport.Enum.forString(getStaffAnswer("1_any_support",ocanStaffFormData)));
+			
+			String sexualOrientationStr = getStaffAnswer("sex_orientation",ocanStaffFormData);
+			String sexualOrientation_other = getStaffAnswer("sex_orientation_other",ocanStaffFormData);
+			ca.ehealthontario.ccim.SexualOrientationDocument.SexualOrientation sexualOrientation = ca.ehealthontario.ccim.SexualOrientationDocument.SexualOrientation.Factory.newInstance();
+			sexualOrientation.setValue(ca.ehealthontario.ccim.SexualOrientationDocument.SexualOrientation.Value.Enum.forString(sexualOrientationStr));
+			if(sexualOrientation_other!=null && !isEmpty(sexualOrientation_other))
+			{
+				sexualOrientation.setOther(sexualOrientation_other);				
+			}
+			domain.setSexualOrientation(sexualOrientation);
+			
+			domain.setFamilyIncome(ca.ehealthontario.ccim.FamilyIncomeDocument.FamilyIncome.Enum.forString(getStaffAnswer("family_income",ocanStaffFormData)));
+			domain.setIncomeSupportedPeople(ca.ehealthontario.ccim.IncomeSupportedPeopleDocument.IncomeSupportedPeople.Enum.forString(getStaffAnswer("people_income_support",ocanStaffFormData)));
 			
 			List<String> livingArrangements = getMultipleStaffAnswer("1_live_with_anyone", ocanStaffFormData);
 			String livingArrangementOther = getStaffAnswer("1_live_with_anyone_other",ocanStaffFormData);
@@ -3031,12 +3058,15 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		}*/
 		
 		if(!isEmpty(year_arrived_in_canada)){
-			SimpleDateFormat formatter1 = new SimpleDateFormat("dd/MM/yyyy");
-			String year_arrived_in_canada_str = "01/01/"+year_arrived_in_canada;
+			//SimpleDateFormat formatter1 = new SimpleDateFormat("dd/MM/yyyy");
+			//String year_arrived_in_canada_str = "01/01/"+year_arrived_in_canada;
 			
 			try {
-				Calendar year_arrived_in_canada_obj = convertToOcanXmlCalendar(formatter1.parse(year_arrived_in_canada_str));
-				timeLivedInCanada.setArrivalYear(year_arrived_in_canada_obj);
+				XmlGYear xmlGYear = new XmlGYearImpl();
+				xmlGYear.setStringValue(year_arrived_in_canada);
+				
+				//Calendar year_arrived_in_canada_obj = convertToOcanXmlCalendar(formatter1.parse(year_arrived_in_canada_str));
+				timeLivedInCanada.xsetArrivalYear(xmlGYear);
 				
 			} catch (Exception e) {
 				logger.error("error in convertTimeLivedInCanada.. "+e.getMessage(), e);

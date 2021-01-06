@@ -52,6 +52,7 @@ import javax.xml.ws.BindingProvider;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.ws.security.WSPasswordCallback;
+import org.apache.xmlbeans.GDate;
 import org.apache.xmlbeans.XmlGYear;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.impl.values.XmlGYearImpl;
@@ -935,6 +936,11 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 			{
 				sex = "O";
 			}
+			
+			if(!ocanStaffForm.getGender().equals("F") && !ocanStaffForm.getGender().equals("M")) {
+				sex = "O";
+			}
+			
 			clientType.setSex(ca.ehealthontario.ccim.SexDocument.Sex.Enum.forString(sex));
 		}
 		
@@ -1104,7 +1110,7 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		ca.ehealthontario.ccim.GenderDocument.Gender gender = ca.ehealthontario.ccim.GenderDocument.Gender.Factory.newInstance();
 		gender.setValue(ca.ehealthontario.ccim.GenderDocument.Gender.Value.Enum.forString(ocanStaffForm.getGender()));
 		clientRecord.setGender(gender);
-
+				
 		if(!"TRUE".equalsIgnoreCase(getStaffAnswer("consumerAnonymous",ocanStaffFormData))) {
 			clientRecord.setMaritalStatus(ca.ehealthontario.ccim.MaritalStatusDocument.MaritalStatus.Enum.forString(getStaffAnswer("marital_status",ocanStaffFormData)));
 		}else{
@@ -1206,8 +1212,8 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		
 		ca.ehealthontario.ccim.GenderDocument.Gender gender = ca.ehealthontario.ccim.GenderDocument.Gender.Factory.newInstance();
 		gender.setValue(ca.ehealthontario.ccim.GenderDocument.Gender.Value.Enum.forString(ocanStaffForm.getGender()));
-		clientRecord.setGender(gender);
-
+		clientRecord.setGender(gender);			
+		
 		if(!"TRUE".equalsIgnoreCase(getStaffAnswer("consumerAnonymous",ocanStaffFormData))) {
 			clientRecord.setMaritalStatus(ca.ehealthontario.ccim.MaritalStatusDocument.MaritalStatus.Enum.forString(getStaffAnswer("marital_status",ocanStaffFormData)));
 		}else{
@@ -1349,7 +1355,7 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		ca.ehealthontario.ccim.GenderDocument.Gender gender = ca.ehealthontario.ccim.GenderDocument.Gender.Factory.newInstance();
 		gender.setValue(ca.ehealthontario.ccim.GenderDocument.Gender.Value.Enum.forString(ocanStaffForm.getGender()));
 		clientRecord.setGender(gender);
-
+						
 		if(!"TRUE".equalsIgnoreCase(getStaffAnswer("consumerAnonymous",ocanStaffFormData))) {
 			clientRecord.setMaritalStatus(ca.ehealthontario.ccim.MaritalStatusDocument.MaritalStatus.Enum.forString(getStaffAnswer("marital_status",ocanStaffFormData)));
 		}else{
@@ -2103,6 +2109,8 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 			}
 			
 			ocanDomains.setDomainArray(domainList.toArray(new FullDomainItemType[domainList.size()]));
+			
+			
 		} 
 		
 		return ocanDomains;
@@ -2360,10 +2368,20 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 					livingArrangementType.setOther(livingArrangementOther);
 					
 					arrangementTypes.add(livingArrangementType);
-				}
+				}				
 				
 				livingArrangementList.setLivingArrangementTypeArray(arrangementTypes.toArray(new LivingArrangementType[] {}));
 				domain.setLivingArrangementList(livingArrangementList);
+
+				String sexualOrientationStr = getStaffAnswer("sex_orientation",ocanStaffFormData);
+				String sexualOrientation_other = getStaffAnswer("sex_orientation_other",ocanStaffFormData);
+				ca.ehealthontario.ccim.SexualOrientationDocument.SexualOrientation sexualOrientation = ca.ehealthontario.ccim.SexualOrientationDocument.SexualOrientation.Factory.newInstance();
+				sexualOrientation.setValue(ca.ehealthontario.ccim.SexualOrientationDocument.SexualOrientation.Value.Enum.forString(sexualOrientationStr));
+				if(sexualOrientation_other!=null && !isEmpty(sexualOrientation_other))
+				{
+					sexualOrientation.setOther(sexualOrientation_other);				
+				}
+				domain.setSexualOrientation(sexualOrientation);
 			}
 			
 			break;
@@ -3062,9 +3080,9 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 			//String year_arrived_in_canada_str = "01/01/"+year_arrived_in_canada;
 			
 			try {
-				XmlGYear xmlGYear = new XmlGYearImpl();
+				XmlGYear xmlGYear = new XmlGYearImpl(); 
 				xmlGYear.setStringValue(year_arrived_in_canada);
-				
+							
 				//Calendar year_arrived_in_canada_obj = convertToOcanXmlCalendar(formatter1.parse(year_arrived_in_canada_str));
 				timeLivedInCanada.xsetArrivalYear(xmlGYear);
 				

@@ -39,6 +39,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -256,11 +257,12 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 
 		return formatter1.format(date) + "T" + formatter2.format(date) + "Z";
 	}
+	
 	public static Calendar convertToOcanXmlCalendar(Date date) {
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(date);
 		return calendar;
-	}
+	}	
 	
 	public static OCANStringDateType convertDateToOcanStringDateType(Date date)
 	{
@@ -281,7 +283,7 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd");
 
 		return formatter1.format(date) + "Z";
-	}
+	}	
 	
 	public static XMLGregorianCalendar convertToXmlDate(Date date) throws Exception {
 		XMLGregorianCalendar xmlGregorianCalendar = null;
@@ -536,6 +538,12 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		String submissionFileXmlStr = sos.toString();
 		submissionFileXmlStr = submissionFileXmlStr.replaceAll("xmlns:ccim=\"http://www.ehealthontario.ca/CCIM\"", "xmlns=\"http://www.ehealthontario.ca/CCIM\"");
 		submissionFileXmlStr = submissionFileXmlStr.replaceAll("ccim:", "");
+		
+		//arrivalYear="2000-05:00" bornInCanada="FALSE"
+		//should be: arrivalYear="2000" bornInCanada="FALSE"
+		//not a good solution but
+		submissionFileXmlStr = submissionFileXmlStr.replaceAll("-05:00\" bornInCanada=", "\" bornInCanada=");
+		
 		t.setValue(submissionFileXmlStr);
 
 		Record r = new Record();
@@ -3076,15 +3084,13 @@ public class OcanReportUIBeanV3 implements CallbackHandler {
 		}*/
 		
 		if(!isEmpty(year_arrived_in_canada)){
-			//SimpleDateFormat formatter1 = new SimpleDateFormat("dd/MM/yyyy");
-			//String year_arrived_in_canada_str = "01/01/"+year_arrived_in_canada;
-			
+			SimpleDateFormat formatter1 = new SimpleDateFormat("dd/MM/yyyy");
+			String year_arrived_in_canada_str = "01/01/"+year_arrived_in_canada;
 			try {
-				XmlGYear xmlGYear = new XmlGYearImpl(); 
-				xmlGYear.setStringValue(year_arrived_in_canada);
-							
-				//Calendar year_arrived_in_canada_obj = convertToOcanXmlCalendar(formatter1.parse(year_arrived_in_canada_str));
-				timeLivedInCanada.xsetArrivalYear(xmlGYear);
+				//XmlGYear xmlGYear = new XmlGYearImpl(); 
+				//xmlGYear.setStringValue(year_arrived_in_canada);
+				Calendar year_arrived_in_canada_obj = convertToOcanXmlCalendar(formatter1.parse(year_arrived_in_canada_str));
+				timeLivedInCanada.setArrivalYear(year_arrived_in_canada_obj);
 				
 			} catch (Exception e) {
 				logger.error("error in convertTimeLivedInCanada.. "+e.getMessage(), e);
